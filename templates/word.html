@@ -1,0 +1,19 @@
+<h1>{{ word }}</h1>
+
+<form method="get">
+  <select name="source">
+    <option value="">All</option>
+    <option value="daily" {% if current_source=="daily" %}selected{% endif %}>Daily</option>
+    <option value="news" {% if current_source=="news" %}selected{% endif %}>News</option>
+    <option value="business" {% if current_source=="business" %}selected{% endif %}>Business</option>
+  </select>
+  <button type="submit">Filter</button>
+</form>
+
+<ul>
+{% for title, source, count in articles %}
+  <li>{{ title }} | {{ source }} | {{ count }}</li>
+{% endfor %}
+</ul>
+
+<a href="/">Back</a>

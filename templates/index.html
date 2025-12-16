@@ -1,0 +1,9 @@
+<h1>Top Words</h1>
+<a href="/add">Add Article</a>
+<ul>
+{% for w, freq in words %}
+  <li>
+    <a href="/word/{{ w }}">{{ w }}</a> ({{ freq }})
+  </li>
+{% endfor %}
+</ul>
