@@ -1,18 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Article</title>
+<style>
+/* ===================== */
+/* General Styles        */
+/* ===================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 0 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 120px auto 50px; /* khoảng cách cho navbar fixed */
+    padding: 0 15px;
+}
+
+/* ===================== */
+/* Navbar Styles         */
+/* ===================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    padding: 10px 20px;
+    z-index: 1000;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    flex-wrap: wrap;
+}
+
+.navbar .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+}
+
+.navbar .search-bar {
+    width: 25%;
+    min-width: 120px;
+    margin: 0 15px;
+}
+
+.navbar .search-bar input[type="text"] {
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 20px;
+    border: none;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.navbar .user-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    font-weight: 500;
+}
+
+.navbar .user-actions a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.navbar .user-actions a:hover {
+    opacity: 0.85;
+}
+
+.navbar .user-actions .username {
+    font-weight: 600;
+    background-color: rgba(255,255,255,0.2);
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+/* ===================== */
+/* Page Header           */
+/* ===================== */
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #34495e;
+    margin-bottom: 30px;
+}
+
+/* ===================== */
+/* Form Styles           */
+/* ===================== */
+form {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+form input[type="text"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+form input[type="text"]:focus,
+form select:focus,
+form textarea:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 6px rgba(52,152,219,0.3);
+}
+
+form button {
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: opacity 0.3s;
+}
+
+form button:hover {
+    opacity: 0.85;
+}
+
+form select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    appearance: none; /* ẩn mũi tên mặc định */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #fff;
+    background-image: linear-gradient(45deg, transparent 50%, #3498db 50%), 
+                      linear-gradient(135deg, #3498db 50%, transparent 50%);
+    background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px);
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+form select:focus {
+    border-color: #22e282ff;
+    box-shadow: 0 0 6px rgba(52,152,219,0.3);
+}
+
+form select option {
+    padding: 8px 12px;
+    background-color: #fff;
+    color: #2c3e50;
+}
+
+/* Hover option (một số trình duyệt hỗ trợ) */
+form select option:hover {
+    background-color: #ecf0f1;
+}
+
+/* ===================== */
+/* Box sizing cho đều    */
+/* ===================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* ===================== */
+/* Form Styles           */
+/* ===================== */
+form input[type="text"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* ===================== */
+/* Toast Notifications   */
+/* ===================== */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+#toast-container div {
+    background: #34495e;
+    color: #fff;
+    padding: 10px 18px;
+    margin-top: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    font-weight: 500;
+    min-width: 200px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.3s, transform 0.3s;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== -->
+<!-- Navbar                -->
+<!-- ===================== -->
+<div class="navbar">
+    <a href="/" class="logo">WordApp</a>
+
+    <div class="search-bar">
+        <input type="text" placeholder="Search words...">
+    </div>
+
+    <div class="user-actions">
+        {% if g.user %}
+            <span class="username">👤 {{ g.user.username }}</span>
+            <a href="/my_learning">📘 My Learning</a>
+            {% if g.user.role == 'admin' %}
+                <a href="/add">➕ Add Article</a>
+            {% endif %}
+            <a href="/logout">🚪 Logout</a>
+        {% else %}
+            <a href="/login">🔑 Login</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container">
 <h1>Add Article</h1>
 <form method="post">
-  Title:<br>
-  <input name="title"><br><br>
+  <label>Title:</label>
+  <input name="title" type="text" required>
 
-  Source ( /  / ):<br>
-  <select name="source">
+  <label>Source ( / / ):</label>
+  <select name="source" required>
     <option value="daily">daily</option>
     <option value="news">news</option>
     <option value="business">business</option>
     <option value="formal">formal</option>
   </select>
-<br><br>
-  Content:<br>
-  <textarea name="content" rows="10" cols="80"></textarea><br><br>
+
+  <label>Content:</label>
+  <textarea name="content" rows="10" required></textarea>
 
   <button type="submit">Save</button>
 </form>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+function showToast(msg){
+    const box = document.getElementById("toast-container");
+    const t = document.createElement("div");
+    t.innerText = msg;
+    box.insertBefore(t, box.firstChild);
+    setTimeout(()=>{ t.style.opacity=1; t.style.transform='translateY(0)'; },10);
+    setTimeout(()=>{ t.style.opacity=0; t.style.transform='translateY(20px)'; setTimeout(()=>t.remove(),300); },2500);
+}
+</script>
+
+</body>
+</html>

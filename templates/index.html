@@ -1,9 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top Words</title>
+<style>
+/* ===================== */
+/* General Styles        */
+/* ===================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0 20px;
+}
+
+/* ===================== */
+/* Navbar Styles         */
+/* ===================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    padding: 10px 20px;
+    z-index: 1000;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    flex-wrap: wrap;
+}
+
+.navbar .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+}
+
+.navbar .search-bar {
+    width: 25%; /* chiếm 1/4 navbar */
+    min-width: 120px;
+    margin: 0 15px;
+}
+
+.navbar .search-bar input[type="text"] {
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 20px;
+    border: none;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.navbar .user-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    font-weight: 500;
+}
+
+.navbar .user-actions a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.navbar .user-actions a:hover {
+    opacity: 0.85;
+}
+
+.navbar .user-actions .username {
+    font-weight: 600;
+    background-color: rgba(255,255,255,0.2);
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+/* ===================== */
+/* Header "Top Words"    */
+/* ===================== */
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 100px; /* tạo khoảng cách cho navbar fixed */
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, #ff7f50, #ffb347);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 10px 0;
+}
+
+/* ===================== */
+/* Word List             */
+/* ===================== */
+#word-list {
+    list-style: none;
+    padding: 0;
+    max-width: 700px;
+    margin: 0 auto 50px;
+}
+
+#word-list li {
+    background-color: #fff;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#word-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+#word-list li a {
+    color: #2c3e50;
+    font-weight: bold;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+#word-list li a:hover {
+    text-decoration: underline;
+}
+
+/* Status Styles */
+.status {
+    margin-left: 10px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.action-btn[data-action="add"] {
+    background-color: #2ecc71;
+    color: #fff;
+}
+
+.action-btn[data-action="drop"] {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.action-btn[data-action="reviewing"] {
+    background-color: #f1c40f;
+    color: #fff;
+}
+
+.action-btn[data-action="mastered"] {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.action-btn[data-action="reset"] {
+    background-color: #95a5a6;
+    color: #fff;
+}
+
+.action-btn:hover {
+    opacity: 0.85;
+}
+
+/* ===================== */
+/* Toast Notifications   */
+/* ===================== */
+#toast-container div {
+    font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== -->
+<!-- Navbar                -->
+<!-- ===================== -->
+<div class="navbar">
+    <a href="/" class="logo">WordApp</a>
+
+    <div class="search-bar">
+        <input type="text" placeholder="Search words...">
+    </div>
+
+    <div class="user-actions">
+    {% if g.user %}
+        <span class="username">👤 {{ g.user.username }}</span>
+        <a href="/my_learning">📘 My Learning</a>
+        {% if g.user.role == 'admin' %}
+            <a href="/add">➕ Add Article</a>
+        {% endif %}
+        <a href="/logout">🚪 Logout</a>
+    {% else %}
+        <a href="/login">🔑 Login</a>
+    {% endif %}
+    </div>
+</div>
+
 <h1>Top Words</h1>
-<a href="/add">Add Article</a>
-<ul>
-{% for w, freq in words %}
-  <li>
-    <a href="/word/{{ w }}">{{ w }}</a> ({{ freq }})
-  </li>
+
+<ul id="word-list">
+{% for w, freq, word_id, li_status in words %}
+<li data-id="{{ word_id }}">
+    <div>
+        <a href="/word/{{ w }}">{{ w }}</a> ({{ freq }})
+        {% if g.user %}
+        <span class="status">
+            {% if li_status == None %}+ Add
+            {% elif li_status == "learning" %}📘 Đang học
+            {% elif li_status=="reviewing" %}🔁 Đang ôn
+            {% elif li_status=="mastered" %}✔ Đã thuộc
+            {% elif li_status=="dropped" %}❌ Đã bỏ
+            {% endif %}
+        </span>
+        {% endif %}
+    </div>
+
+    {% if g.user %}
+    <span class="actions">
+        {% if li_status == None %}
+            <button class="action-btn" data-action="add">+ Add</button>
+        {% elif li_status=="learning" %}
+            <button class="action-btn" data-action="drop">❌ Bỏ</button>
+            <button class="action-btn" data-action="reviewing">🔁 Đang ôn</button>
+        {% elif li_status=="reviewing" %}
+            <button class="action-btn" data-action="drop">❌ Bỏ</button>
+            <button class="action-btn" data-action="mastered">✔ Đã thuộc</button>
+        {% elif li_status=="mastered" %}
+            <button class="action-btn" data-action="reset">↩ Học lại</button>
+        {% elif li_status=="dropped" %}
+            <button class="action-btn" data-action="reset">↩ Học lại</button>
+        {% endif %}
+    </span>
+    {% endif %}
+</li>
 {% endfor %}
 </ul>
+
+<div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"></div>
+
+<script>
+// JS vẫn giữ nguyên
+function showToast(msg){
+    const box = document.getElementById("toast-container");
+    const t = document.createElement("div");
+    t.innerText = msg;
+    t.style.cssText = `
+        background: linear-gradient(90deg, #3498db, #2ecc71);
+        color: #fff;
+        padding: 12px 20px;
+        margin-top: 10px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        font-weight: 500;
+        min-width: 180px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s, transform 0.3s;
+    `;
+    // Thêm vào container ở dưới cùng (hiển thị từ dưới lên)
+    box.insertBefore(t, box.firstChild);
+
+    setTimeout(()=>{
+        t.style.opacity = 1;
+        t.style.transform = 'translateY(0)';
+    }, 10);
+
+    setTimeout(()=>{
+        t.style.opacity = 0;
+        t.style.transform = 'translateY(20px)';
+        setTimeout(()=>t.remove(), 300);
+    }, 2500);
+}
+
+document.getElementById("word-list").addEventListener("click", function(e){
+    const btn = e.target.closest(".action-btn");
+    if(!btn) return;
+
+    const li = btn.closest("li");
+    const wordId = li.dataset.id;
+    const action = btn.dataset.action;
+
+    if(action=="add"){
+        fetch(`/add_to_learning/${wordId}`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"}
+        }).then(r=>r.json()).then(res=>{
+            showToast(res.message);
+            if(res.success){
+                li.dataset.itemId = res.item_id;
+                updateUI(li, "learning");
+            }
+        });
+        return;
+    }
+
+    let newStatus;
+    if(action=="drop") newStatus = "dropped";
+    else if(action=="reset") newStatus = "learning";
+    else if(action=="reviewing") newStatus = "reviewing";
+    else if(action=="mastered") newStatus = "mastered";
+
+    fetch(`/update_learning_status/${wordId}`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({status:newStatus})
+    }).then(r=>r.json()).then(res=>{
+        showToast(res.message);
+        if(res.success){
+            updateUI(li, newStatus);
+        }
+    });
+});
+
+function updateUI(li, status){
+    const statusSpan = li.querySelector(".status");
+    const actionsSpan = li.querySelector(".actions");
+    let statusText="", actionsHtml="";
+
+    if(status=="learning"){
+        statusText="📘 Đang học";
+        actionsHtml=`<button class="action-btn" data-action="drop">❌ Bỏ</button>
+                     <button class="action-btn" data-action="reviewing">🔁 Đang ôn</button>`;
+    } else if(status=="reviewing"){
+        statusText="🔁 Đang ôn";
+        actionsHtml=`<button class="action-btn" data-action="drop">❌ Bỏ</button>
+                     <button class="action-btn" data-action="mastered">✔ Đã thuộc</button>`;
+    } else if(status=="mastered"){
+        statusText="✔ Đã thuộc";
+        actionsHtml=`<button class="action-btn" data-action="reset">↩ Học lại</button>`;
+    } else if(status=="dropped"){
+        statusText="❌ Đã bỏ";
+        actionsHtml=`<button class="action-btn" data-action="reset">↩ Học lại</button>`;
+    }
+
+    statusSpan.innerText = statusText;
+    actionsSpan.innerHTML = actionsHtml;
+}
+</script>
+<script>
+function toggleDropdown() {
+    const menu = document.getElementById("user-dropdown");
+    menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+
+// Ẩn dropdown nếu click ra ngoài
+document.addEventListener("click", function(event){
+    const dropdown = document.querySelector(".dropdown");
+    const menu = document.getElementById("user-dropdown");
+    if(dropdown && !dropdown.contains(event.target)){
+        menu.style.display = "none";
+    }
+});
+</script>
+</body>
+</html>

@@ -9,7 +9,7 @@ tokenizer = dictionary.Dictionary(dict="full").create()
 # các POS nên BỎ (trợ từ, lịch sự…)
 STOP_POS = {"助詞", "助動詞", "補助記号", "記号"}
 KEEP_POS = {"名詞", "動詞", "形容詞", "形状詞"}
-COMMON_JUNK = {"もの", "こと", "ところ", "よう", "ため"}
+COMMON_JUNK = {"もの", "こと", "ところ", "よう", "ため", "％", "し"}
 AUX_VERBS = {"する", "なる", "ある", "いる", "できる"}
 
 def extract_words(text: str):

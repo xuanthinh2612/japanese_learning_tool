@@ -11,8 +11,9 @@
 </form>
 
 <ul>
-{% for title, source, count in articles %}
+{% for title, source, content, count in articles %}
   <li>{{ title }} | {{ source }} | {{ count }}</li>
+  <p>{{ content }}</p>
 {% endfor %}
 </ul>
 
