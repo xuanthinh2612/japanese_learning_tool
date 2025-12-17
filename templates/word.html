@@ -1,20 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ word }}</title>
+
+<style>
+/* ===================== */
+/* General Styles        */
+/* ===================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0 20px;
+}
+
+/* ===================== */
+/* Navbar Styles         */
+/* ===================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    padding: 10px 20px;
+    z-index: 1000;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.navbar .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+}
+
+.navbar .user-actions a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 12px;
+    font-weight: 500;
+}
+
+/* ===================== */
+/* Header Word           */
+/* ===================== */
+h1 {
+    text-align: center;
+    margin-top: 100px;
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, #ff7f50, #ffb347);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+}
+
+/* ===================== */
+/* Filter Form           */
+/* ===================== */
+.filter-box {
+    max-width: 700px;
+    margin: 25px auto;
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-box select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 0.95rem;
+}
+
+.filter-box button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    color: #fff;
+    font-weight: 600;
+}
+
+.filter-box button:hover {
+    opacity: 0.9;
+}
+
+/* ===================== */
+/* Article List          */
+/* ===================== */
+#article-list {
+    list-style: none;
+    padding: 0;
+    max-width: 700px;
+    margin: 0 auto 50px;
+}
+
+#article-list li {
+    background-color: #fff;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#article-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.article-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.article-title {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 1.05rem;
+}
+
+.article-meta {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.article-content {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #444;
+}
+
+/* ===================== */
+/* Back Button           */
+/* ===================== */
+.back-link {
+    display: block;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 600;
+    color: #3498db;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* ===================== */
+/* Highlight Word        */
+/* ===================== */
+.highlight-word {
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ===================== -->
+<!-- Navbar                -->
+<!-- ===================== -->
+<div class="navbar">
+    <a href="/" class="logo">WordApp</a>
+    <div class="user-actions">
+        <a href="/">🏠 Home</a>
+    </div>
+</div>
+
+<!-- ===================== -->
+<!-- Word Header           -->
+<!-- ===================== -->
 <h1>{{ word }}</h1>
 
-<form method="get">
-  <select name="source">
-    <option value="">All</option>
-    <option value="daily" {% if current_source=="daily" %}selected{% endif %}>Daily</option>
-    <option value="news" {% if current_source=="news" %}selected{% endif %}>News</option>
-    <option value="business" {% if current_source=="business" %}selected{% endif %}>Business</option>
-  </select>
-  <button type="submit">Filter</button>
+<!-- ===================== -->
+<!-- Filter                -->
+<!-- ===================== -->
+<form method="get" class="filter-box">
+    <select name="source">
+        <option value="">All sources</option>
+        <option value="daily" {% if current_source=="daily" %}selected{% endif %}>Daily</option>
+        <option value="news" {% if current_source=="news" %}selected{% endif %}>News</option>
+        <option value="business" {% if current_source=="business" %}selected{% endif %}>Business</option>
+    </select>
+    <button type="submit">🔍 Filter</button>
 </form>
 
-<ul>
+<!-- ===================== -->
+<!-- Articles              -->
+<!-- ===================== -->
+<ul id="article-list">
 {% for title, source, content, count in articles %}
-  <li>{{ title }} | {{ source }} | {{ count }}</li>
-  <p>{{ content }}</p>
+<li>
+    <div class="article-header">
+        <span class="article-title">{{ title }}</span>
+        <span class="article-meta">
+            {{ source }} · {{ count }} times
+        </span>
+    </div>
+    <div class="article-content highlight-target">
+        {{ content }}
+    </div>
+</li>
 {% endfor %}
 </ul>
 
-<a href="/">Back</a>
+<a href="/" class="back-link">← Back to Home</a>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const keyword = "{{ word }}";
+    if (!keyword) return;
+
+    const regex = new RegExp(`(${keyword})`, "gi");
+
+    document.querySelectorAll(".highlight-target").forEach(el => {
+        el.innerHTML = el.innerHTML.replace(
+            regex,
+            `<span class="highlight-word">$1</span>`
+        );
+    });
+});
+</script>
+
+</body>
+</html>

@@ -273,11 +273,10 @@ button[data-action="reset"] { background: #95a5a6; }
 <!-- LEARNING -->
 <div class="panel learning">
 <table>
-<tr><th>Word</th><th>Status</th><th>Action</th></tr>
+<tr><th>Word</th><th>Action</th></tr>
 {% for i in items if i.status=="learning" %}
 <tr data-row="{{ i.word.id }}">
 <td>{{ i.word.word }}</td>
-<td>learning</td>
 <td>
 <button onclick="update(this, {{i.word.id}},'reviewing')" data-action="reviewing">Đang ôn</button>
 <button onclick="update(this, {{i.word.id}},'dropped')" data-action="dropped">Bỏ</button>
@@ -290,11 +289,10 @@ button[data-action="reset"] { background: #95a5a6; }
 <!-- REVIEWING -->
 <div class="panel reviewing">
 <table>
-<tr><th>Word</th><th>Status</th><th>Action</th></tr>
+<tr><th>Word</th><th>Action</th></tr>
 {% for i in items if i.status=="reviewing" %}
 <tr data-row="{{ i.word.id }}">
 <td>{{ i.word.word }}</td>
-<td>reviewing</td>
 <td>
 <button onclick="update(this, {{i.word.id}},'mastered')" data-action="mastered">Đã thuộc</button>
 <button onclick="update(this, {{i.word.id}},'dropped')" data-action="dropped">Bỏ</button>
@@ -307,11 +305,10 @@ button[data-action="reset"] { background: #95a5a6; }
 <!-- MASTERED -->
 <div class="panel mastered">
 <table>
-<tr><th>Word</th><th>Status</th><th>Action</th></tr>
+<tr><th>Word</th><th>Action</th></tr>
 {% for i in items if i.status=="mastered" %}
 <tr data-row="{{ i.word.id }}">
 <td>{{ i.word.word }}</td>
-<td>mastered</td>
 <td>
 <button onclick="update(this, {{i.word.id}},'learning')" data-action="learning">Học lại</button>
 </td>
@@ -323,11 +320,10 @@ button[data-action="reset"] { background: #95a5a6; }
 <!-- DROPPED -->
 <div class="panel dropped">
 <table>
-<tr><th>Word</th><th>Status</th><th>Action</th></tr>
+<tr><th>Word</th><th>Action</th></tr>
 {% for i in items if i.status=="dropped" %}
 <tr data-row="{{ i.word.id }}">
 <td>{{ i.word.word }}</td>
-<td>dropped</td>
 <td>
 <button onclick="update(this, {{i.word.id}},'learning')" data-action="learning">Học lại</button>
 </td>
