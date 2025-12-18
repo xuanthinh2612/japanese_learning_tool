@@ -61,3 +61,28 @@ def extract_words(text: str):
         words.append((surface, pos1))
 
     return Counter(words)
+
+
+def extract_full_words(text: str):
+    """
+    Giữ nguyên tất cả từ, chỉ thêm markup <span> với data-word.
+    Trả về string HTML.
+    """
+    tokens = tokenizer.tokenize(text, sudachi_tokenizer.Tokenizer.SplitMode.C)
+    
+    new_content = ""
+    
+    for t in tokens:
+        pos = t.part_of_speech()[0]
+        surface = t.surface()
+
+         # Thêm markup chỉ những từ vựng mới có class important-word
+        if pos in KEEP_POS and pos not in COMMON_JUNK and pos not in STOP_POS and pos not in AUX_VERBS :
+            span = f'<span class="word important-word" data-word="{surface}">{surface}</span>'
+        else:
+            span = f'<span class="word" data-word="{surface}">{surface}</span>'
+        
+       
+        new_content += span
+    
+    return new_content

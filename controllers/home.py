@@ -4,6 +4,7 @@ from models import Article, Word, WordOccurrence, LearningItem
 from flask import g, session
 from models import User
 
+
 @app.before_request
 def load_logged_in_user():
     user_id = session.get("user_id")
@@ -37,20 +38,3 @@ def top_words():
         words_data.append((w, freq, word_id, li_status))
 
     return render_template("top_words.html", words=words_data)
-
-
-@app.route("/word/<word>")
-def word_detail(word):
-    data = (
-        db.session.query(
-            Article.title,
-            Article.source,
-            Article.content,
-            WordOccurrence.count
-        )
-        .join(WordOccurrence)
-        .join(Word)
-        .filter(Word.word == word)
-        .all()
-    )
-    return render_template("word.html", word=word, articles=data, current_source="daily")

@@ -212,6 +212,19 @@ h1 {
     box-shadow: 0 1px 4px rgba(0,0,0,0.15);
 }
 
+/* ===================== */
+/* Popup Word        */
+/* ===================== */
+.important-word {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#word-popup {
+    z-index: 999;
+    max-width: 300px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
 </style>
 </head>
 
@@ -271,30 +284,56 @@ h1 {
             {{ source }} · {{ count }} times
         </span>
     </div>
-    <div class="article-content highlight-target">
-        {{ content }}
+    <div class="article-content">
+        <div class="article-content">
+            {{ content | safe }}
+        </div>
     </div>
 </li>
 {% endfor %}
 </ul>
 
 <a href="/" class="back-link">← Back to Home</a>
+<div id="word-popup" style="display:none; position:absolute; background:white; border:1px solid #ccc; padding:10px;"></div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const keyword = "{{ word }}";
-    if (!keyword) return;
+    document.addEventListener("DOMContentLoaded", function () {
+        const keyword = "{{ word }}";
+        if (!keyword) return;
 
-    const regex = new RegExp(`(${keyword})`, "gi");
+        const regex = new RegExp(`(${keyword})`, "gi");
 
-    document.querySelectorAll(".highlight-target").forEach(el => {
-        el.innerHTML = el.innerHTML.replace(
-            regex,
-            `<span class="highlight-word">$1</span>`
-        );
+        document.querySelectorAll(".important-word").forEach(el => {
+            if (el.innerHTML.trim() == keyword) {
+                el.classList.add('highlight-word');
+            }
+        });
     });
-});
 </script>
 
+<script>
+    document.querySelector('.article-content').addEventListener('click', async (e) => {
+        if (e.target.classList.contains('word')) {
+            const wordText = e.target.dataset.word;
+            console.log("Clicked", wordText); // test
+            const res = await fetch(`/api/word/${encodeURIComponent(wordText)}`);
+            const data = await res.json();
+
+            const popup = document.getElementById('word-popup');
+            let html = `<strong>${data.word}</strong><br><em>${data.meanings}</em>`;
+            popup.innerHTML = html;
+            popup.style.left = e.pageX + 'px';
+            popup.style.top = e.pageY + 'px';
+            popup.style.display = 'block';
+        }
+    });
+
+    // click ngoài ẩn popup
+    document.addEventListener('click', e => {
+        if (!e.target.classList.contains('word')) {
+            document.getElementById('word-popup').style.display = 'none';
+        }
+    });
+</script>
 </body>
 </html>

@@ -2,7 +2,7 @@ from flask import render_template, request, redirect
 from app import app, db
 from models import Article, Word, WordOccurrence, User, LearningItem
 from controllers.helper import extract_words
-from flask import g, session
+from flask import g, session, jsonify
 
 
 @app.before_request
@@ -73,3 +73,33 @@ def update_learning_status(word_id):
     }
 
 
+@app.route("/word/<word>")
+def word_detail(word):
+    data = (
+        db.session.query(
+            Article.title,
+            Article.source,
+            Article.content,
+            WordOccurrence.count
+        )
+        .join(WordOccurrence)
+        .join(Word)
+        .filter(Word.word == word)
+        .all()
+    )
+    return render_template("word.html", word=word, articles=data, current_source="daily")
+
+
+# Tra từ API
+@app.route("/api/word/<word>", methods=["GET", "POST"])
+def get_word(word):
+    word_obj = Word.query.filter_by(word=word).first_or_404()  # tìm theo column 'word'
+    examples = [{"sentence": e.sentence, "translation": e.translation} for e in word_obj.examples]
+    return jsonify({
+        "id": word_obj.id,
+        "word": word_obj.word,
+        "furigana": word_obj.furigana,
+        "pos": word_obj.pos,
+        "meanings": word_obj.meanings,
+        "examples": examples
+    })

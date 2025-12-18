@@ -1,9 +1,10 @@
 from flask import render_template, request, redirect
 from app import app, db
 from models import Article, Word, WordOccurrence, LearningItem
-from .helper import extract_words
+from .helper import extract_words, extract_full_words
 from flask import g, session
 from models import User
+
 
 @app.before_request
 def load_logged_in_user():
@@ -14,15 +15,16 @@ def load_logged_in_user():
 @app.route("/add-article", methods=["GET", "POST"])
 def add_article():
     if request.method == "POST":
+        article_content = request.form["content"].strip()
         article = Article(
             title=request.form["title"],
             source=request.form["source"],
-            content=request.form["content"]
+            content=extract_full_words(article_content)
         )
         db.session.add(article)
         db.session.commit()
 
-        word_counts = extract_words(article.content)
+        word_counts = extract_words(article_content)
 
         for (word_text, pos), count in word_counts.items():
             word = Word.query.filter_by(word=word_text).first()
@@ -50,4 +52,3 @@ def add_article():
         return redirect("/")
 
     return render_template("add_article.html")
-
