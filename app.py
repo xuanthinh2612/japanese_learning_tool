@@ -13,10 +13,8 @@ app.secret_key = "secret-key"  # ⚡ Thay bằng chuỗi dài và khó đoán
 
 db = SQLAlchemy(app)
 
-from routes import *
+from controllers import *
 from models import *
-from user_word import *
-from user_auth import *
 
 if __name__ == "__main__":
     with app.app_context():

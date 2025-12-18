@@ -249,3 +249,60 @@ class LearningItem(db.Model):
 
     user = db.relationship("User", back_populates="learning_items")
     word = db.relationship("Word", back_populates="learning_items")
+
+# ==================================================
+# USER SENTENCE / SRS
+# ==================================================
+class UserSentence(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    sentence = db.Column(db.Text)
+    translation = db.Column(db.Text)
+    source = db.Column(db.String(50))
+
+
+# ==================================================
+# Review Log / SRS
+# ==================================================
+class ReviewLog(db.Model):
+    __tablename__ = "review_logs"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    learning_item_id = db.Column(
+        db.Integer,
+        db.ForeignKey("learning_items.id"),
+        nullable=False
+    )
+
+    reviewed_at = db.Column(db.DateTime, server_default=db.func.now())
+    rating = db.Column(db.Integer)  
+    # 0 = again, 1 = hard, 2 = good, 3 = easy
+
+    interval = db.Column(db.Integer)  # số ngày đến lần review tiếp
+    ease_factor = db.Column(db.Float)
+
+    learning_item = db.relationship("LearningItem")
+
+
+# ==================================================
+# Deck
+# ==================================================
+class Deck(db.Model):
+    __tablename__ = "decks"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    description = db.Column(db.Text)
+    is_public = db.Column(db.Boolean, default=True)
+
+
+# ==================================================
+# Deck Word
+# ==================================================
+class DeckWord(db.Model):
+    __tablename__ = "deck_words"
+
+    deck_id = db.Column(db.Integer, db.ForeignKey("decks.id"), primary_key=True)
+    word_id = db.Column(db.Integer, db.ForeignKey("words.id"), primary_key=True)
+

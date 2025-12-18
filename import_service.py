@@ -159,5 +159,4 @@ def run_import(kanji_file, vocab_file, grammar_file):
 run_import(
     kanji_file="data/kanji.json",
     vocab_file="data/vocab.json",
-    grammar_file="data/grammar.json"
-)
+    grammar_file="data/grammar.json")
