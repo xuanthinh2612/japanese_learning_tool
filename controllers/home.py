@@ -1,7 +1,6 @@
 from flask import render_template, request, redirect
 from app import app, db
 from models import Article, Word, WordOccurrence, LearningItem
-from helper import extract_words
 from flask import g, session
 from models import User
 

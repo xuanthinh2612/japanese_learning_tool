@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect
 from app import app, db
 from models import Article, Word, WordOccurrence, LearningItem
-from helper import extract_words
+from .helper import extract_words
 from flask import g, session
 from models import User
 
@@ -11,7 +11,7 @@ def load_logged_in_user():
     g.user = User.query.get(user_id) if user_id else None
 
 
-@app.route("/add", methods=["GET", "POST"])
+@app.route("/add-article", methods=["GET", "POST"])
 def add_article():
     if request.method == "POST":
         article = Article(
