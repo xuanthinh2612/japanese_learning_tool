@@ -13,26 +13,7 @@ def load_logged_in_user():
 
 @app.route("/")
 def index():
-    words_data = []
-    for w, freq, word_id in (
-        db.session.query(
-            Word.word,
-            db.func.sum(WordOccurrence.count).label("freq"),
-            Word.id
-        )
-        .join(WordOccurrence)
-        .group_by(Word.id, Word.word)
-        .order_by(db.desc("freq"))
-        .limit(5000)
-        .all()
-    ):
-        li_status = None
-        if g.user:
-            item = LearningItem.query.filter_by(user_id=g.user.id, word_id=word_id).first()
-            li_status = item.status if item else None
-        words_data.append((w, freq, word_id, li_status))
-
-    return render_template("index.html", words=words_data)
+    return render_template("index.html")
 
 
 @app.route("/add", methods=["GET", "POST"])

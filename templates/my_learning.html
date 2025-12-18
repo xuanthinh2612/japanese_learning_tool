@@ -244,7 +244,9 @@ button[data-action="reset"] { background: #95a5a6; }
     <div class="user-actions">
     {% if g.user %}
         <span class="username">👤 {{ g.user.username }}</span>
-        <a href="/my_learning">📘 My Learning</a>
+        {% if g.user.role == 'admin' %}
+            <a href="/add">➕ Add Article</a>
+        {% endif %}
         <a href="/logout">🚪 Logout</a>
     {% else %}
         <a href="/login">🔑 Login</a>

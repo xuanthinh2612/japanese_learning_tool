@@ -1,0 +1,38 @@
+/* ===================== */
+/* General Styles        */
+/* ===================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #e0f7fa, #ffffff);
+    color: #333;
+    overflow-x: hidden;
+}
+
+/* ===================== */
+/* Card Container        */
+/* ===================== */
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    margin: 60px auto 100px;
+}
+
+/* ===================== */
+/* Header                */
+/* ===================== */
+h1 {
+    text-align: center;
+    margin-top: 80px;
+    font-size: 3rem;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+}

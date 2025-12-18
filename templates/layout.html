@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WordApp{% endblock %}</title>
+
+    <!-- Link CSS chung -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style-base.css') }}">
+    
+        <!-- CSS riêng cho page -->
+    {% block extra_css %}{% endblock %}
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+
+<!-- ===================== -->
+<!-- Navbar                -->
+<!-- ===================== -->
+<div class="navbar">
+    <a href="/" class="logo">WordApp</a>
+
+    <div class="search-bar">
+        <input type="text" placeholder="Search words...">
+    </div>
+
+    <div class="user-actions">
+    {% if g.user %}
+        <span class="username">👤 {{ g.user.username }}</span>
+        {% if g.user.role == 'admin' %}
+            <a href="/add">➕ Add Article</a>
+        {% endif %}
+        <a href="/logout">🚪 Logout</a>
+    {% else %}
+        <a href="/login">🔑 Login</a>
+    {% endif %}
+    </div>
+</div>
+
+<!-- Nội dung riêng từng trang -->
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Footer chung -->
+<footer>
+    &copy; 2025 WordApp. All rights reserved.
+    <br>
+    <a href="/about">About</a> | <a href="/contact">Contact</a>
+</footer>
+
+</body>
+</html>

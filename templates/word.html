@@ -33,6 +33,7 @@ body {
     z-index: 1000;
     border-radius: 0 0 10px 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    flex-wrap: wrap;
 }
 
 .navbar .logo {
@@ -42,11 +43,46 @@ body {
     text-decoration: none;
 }
 
+.navbar .search-bar {
+    width: 25%; /* chiếm 1/4 navbar */
+    min-width: 120px;
+    margin: 0 15px;
+}
+
+.navbar .search-bar input[type="text"] {
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 20px;
+    border: none;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.navbar .user-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    font-weight: 500;
+}
+
 .navbar .user-actions a {
     color: #fff;
     text-decoration: none;
-    margin-left: 12px;
-    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.navbar .user-actions a:hover {
+    opacity: 0.85;
+}
+
+.navbar .user-actions .username {
+    font-weight: 600;
+    background-color: rgba(255,255,255,0.2);
+    padding: 3px 8px;
+    border-radius: 12px;
 }
 
 /* ===================== */
@@ -181,13 +217,27 @@ h1 {
 
 <body>
 
+
 <!-- ===================== -->
 <!-- Navbar                -->
 <!-- ===================== -->
 <div class="navbar">
     <a href="/" class="logo">WordApp</a>
+
+    <div class="search-bar">
+        <input type="text" placeholder="Search words...">
+    </div>
+
     <div class="user-actions">
-        <a href="/">🏠 Home</a>
+    {% if g.user %}
+        <span class="username">👤 {{ g.user.username }}</span>
+        {% if g.user.role == 'admin' %}
+            <a href="/add">➕ Add Article</a>
+        {% endif %}
+        <a href="/logout">🚪 Logout</a>
+    {% else %}
+        <a href="/login">🔑 Login</a>
+    {% endif %}
     </div>
 </div>
 
