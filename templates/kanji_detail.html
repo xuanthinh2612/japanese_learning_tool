@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block title %}Kanji {{ kanji.kanji }} - WordApp{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/kanji.css') }}">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="kanji-detail-wrapper">
+
+    <!-- Kanji chính -->
+    <div class="kanji-main-card">
+        <div class="kanji-big">{{ kanji.character }}</div>
+
+        <div class="kanji-meta">
+            {% if kanji.jlpt %}
+                <span class="badge">JLPT {{ kanji.jlpt }}</span>
+            {% endif %}
+            {% if kanji.strokes %}
+                <span class="badge">{{ kanji.strokes }} Nét</span>
+            {% endif %}
+            {% if kanji.strokes %}
+                <span class="badge">Âm hán: {{ kanji.hanviet }}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Thông tin đọc -->
+    <div class="kanji-info-card">
+        <div class="info-row">
+            <span class="label">Âm on</span>
+            <span class="value">{{ kanji.onyomi or "—" }}</span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Âm kun</span>
+            <span class="value">{{ kanji.kunyomi or "—" }}</span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Ý nghĩa</span>
+            <span class="value meaning">{{ kanji.meaning_vi or "—" }}</span>
+        </div>
+    </div>
+
+    <!-- Ví dụ -->
+    {% if kanji.examples %}
+    <div class="kanji-example-card">
+        <h3>📖 Ví dụ</h3>
+        <ul>
+            {% for ex in kanji.examples.split(',') %}
+                {% if ex %}
+                    <li>{{ ex }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="kanji-actions">
+        <button class="btn primary">⭐ Thêm vào danh sách học</button>
+        <a href="/kanji" class="btn ghost">← Quay lại danh sách</a>
+    </div>
+
+</div>
+
+{% endblock %}

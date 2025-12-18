@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block title %}{{ grammar.pattern }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/grammar.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="grammar-detail-wrapper">
+
+    <div class="grammar-header">
+        <div class="grammar-pattern-large">{{ grammar.pattern }}</div>
+        <div class="grammar-level-badge">{{ grammar.level }}</div>
+    </div>
+
+    <div class="grammar-section">
+        <h3>📖 Meaning</h3>
+        <p>{{ grammar.meaning }}</p>
+    </div>
+
+    <div class="grammar-section">
+        <h3>🧠 Explanation</h3>
+        <p>{{ grammar.explanation }}</p>
+    </div>
+
+    {% if grammar.examples %}
+    <div class="grammar-section">
+        <h3>✏ Examples</h3>
+        <ul class="grammar-examples">
+            {% for ex in grammar.examples %}
+                <li>{{ ex.content }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <a href="/grammar" class="back-btn">← Back to Grammar List</a>
+
+</div>
+{% endblock %}

@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 
@@ -12,6 +13,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "secret-key"  # ⚡ Thay bằng chuỗi dài và khó đoán
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)  # <<< Dùng để chạy migration
 
 from controllers import *
 from models import *

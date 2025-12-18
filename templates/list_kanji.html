@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block title %}Kanji List - WordApp{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/kanji.css') }}">
+
+{% endblock %}
+
+{% block content %}
+
+<h1>📘 Kanji</h1>
+
+<div class="container kanji-container">
+    {% for kanji in Kanji_list %}
+        <a href="/kanji/{{ kanji.id }}" class="card kanji-card">
+            <div class="kanji-char">
+                {{ kanji.character }}
+            </div>
+
+            <div class="kanji-info">
+                {% if kanji.onyomi %}
+                    <div class="reading">音: {{ kanji.onyomi }}</div>
+                {% endif %}
+                {% if kanji.kunyomi %}
+                    <div class="reading">訓: {{ kanji.kunyomi }}</div>
+                {% endif %}
+                {% if kanji.meaning_vi %}
+                    <div class="meaning">{{ kanji.meaning_vi }}</div>
+                {% endif %}
+            </div>
+        </a>
+    {% endfor %}
+</div>
+<div class="pagination">
+    {% if pagination.has_prev %}
+        <a href="{{ url_for('get_all_kanji', page=pagination.prev_num) }}">« Prev</a>
+    {% endif %}
+
+    {% for page_num in pagination.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+        {% if page_num %}
+            {% if page_num == pagination.page %}
+                <span class="current">{{ page_num }}</span>
+            {% else %}
+                <a href="{{ url_for('get_all_kanji', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+            <span class="dots">…</span>
+        {% endif %}
+    {% endfor %}
+
+    {% if pagination.has_next %}
+        <a href="{{ url_for('get_all_kanji', page=pagination.next_num) }}">Next »</a>
+    {% endif %}
+</div>
+{% endblock %}

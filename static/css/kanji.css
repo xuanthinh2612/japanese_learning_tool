@@ -1,0 +1,310 @@
+/* ===================== */
+/* General Styles        */
+/* ===================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #e0f7fa, #ffffff);
+    color: #333;
+    overflow-x: hidden;
+
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===================== */
+/* Header                */
+/* ===================== */
+h1 {
+    text-align: center;
+    margin-top: 80px;
+    font-size: 2.8rem;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ===================== */
+/* Kanji Grid Container  */
+/* ===================== */
+.container.kanji-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* ✅ 5 cột desktop */
+    gap: 24px;
+    max-width: 1400px;
+    margin: 50px auto 90px;
+    padding: 0 20px;
+}
+
+/* ===================== */
+/* Kanji Card            */
+/* ===================== */
+.kanji-card {
+    height: 180px; /* 🔽 giảm ~30% từ 260px */
+    padding: 14px;
+}
+
+/* Kanji chữ chính */
+.kanji-char {
+    font-size: 3.6rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+
+/* Thông tin đọc */
+.kanji-info {
+    text-align: center;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.kanji-info .reading {
+    color: #3498db;
+    font-weight: 600;
+}
+
+.kanji-info .meaning {
+    margin-top: 4px;
+    color: #2ecc71;
+    font-weight: 600;
+}
+
+/* ===================== */
+/* Pagination            */
+/* ===================== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 30px 0 80px;
+    flex-wrap: wrap;
+}
+
+.pagination a,
+.pagination span {
+    padding: 7px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    background: #fff;
+    color: #3498db;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    color: #fff;
+}
+
+.pagination .current {
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    color: #fff;
+}
+
+.pagination .dots {
+    background: none;
+    box-shadow: none;
+    color: #777;
+}
+
+/* ===================== */
+/* Responsive            */
+/* ===================== */
+
+/* Tablet */
+@media (max-width: 1200px) {
+    .container.kanji-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Small tablet */
+@media (max-width: 992px) {
+    .container.kanji-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .kanji-card {
+        height: 170px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+    .container.kanji-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .kanji-card {
+        height: 150px;
+        padding: 10px;
+    }
+
+    .kanji-char {
+        font-size: 3rem;
+    }
+
+    .kanji-info {
+        font-size: 0.8rem;
+    }
+}
+
+/* ===================== */
+/* Kanji Detail Page     */
+/* ===================== */
+
+.kanji-detail-wrapper {
+    max-width: 900px;
+    margin: 100px auto 120px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+/* Kanji chính */
+.kanji-main-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 40px 20px 30px;
+    text-align: center;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+}
+
+.kanji-big {
+    font-size: 7rem;
+    font-weight: 900;
+    color: #2c3e50;
+    margin-bottom: 18px;
+}
+
+.kanji-meta {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    color: #fff;
+}
+
+/* Info card */
+.kanji-info-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 26px 30px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row .label {
+    font-weight: 700;
+    color: #3498db;
+}
+
+.info-row .value {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.info-row .meaning {
+    color: #2ecc71;
+}
+
+/* Example */
+.kanji-example-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 26px 30px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+}
+
+.kanji-example-card h3 {
+    margin-bottom: 12px;
+    color: #3498db;
+}
+
+.kanji-example-card ul {
+    padding-left: 20px;
+}
+
+.kanji-example-card li {
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+/* Actions */
+.kanji-actions {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 26px;
+    border-radius: 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn.primary {
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+
+.btn.primary:hover {
+    transform: translateY(-3px);
+}
+
+.btn.ghost {
+    background: #fff;
+    color: #3498db;
+    text-decoration: none;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+    .kanji-big {
+        font-size: 5.5rem;
+    }
+
+    .info-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .kanji-actions {
+        flex-direction: column;
+    }
+}

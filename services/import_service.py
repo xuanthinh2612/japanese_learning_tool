@@ -47,20 +47,35 @@ def get_or_create_grammar(pattern):
 # ===========================
 def import_kanji(file_path):
     kanji_list = load_json(file_path)
-
+    
     for k in kanji_list:
         char = k.get("k")
         if not char:
             continue
 
-        kanji = get_or_create_kanji(char)
+        kanji = Kanji.query.filter_by(character=char).first()
+        if not kanji:
+            kanji = Kanji(character=char)
+            db.session.add(kanji)
+
+        # Readings
         kanji.onyomi = ",".join(k.get("on", []))
         kanji.kunyomi = ",".join(k.get("kun", []))
-        kanji.meaning = k.get("m", {}).get("en", "")
-        kanji.strokes = int(k.get("s", 0))
-        kanji.frequency = int(k.get("f", 0)) if k.get("f") else None
+        kanji.hanviet = k.get("ah")
 
-    db.session.commit()
+        # Meanings
+        meanings = k.get("m", {})
+        kanji.meaning_en = meanings.get("en")
+        kanji.meaning_vi = meanings.get("vi")
+
+        # Metadata
+        kanji.strokes = int(k["s"]) if k.get("s") else None
+        kanji.frequency = int(k["f"]) if k.get("f") else None
+
+        # Examples
+        kanji.examples = k.get("e")
+
+    db.session.commit()    
     print(f"Imported {len(kanji_list)} Kanji.")
 
 
@@ -151,12 +166,12 @@ def import_grammar(file_path):
 def run_import(kanji_file, vocab_file, grammar_file):
     print("Starting import...")
     import_kanji(kanji_file)
-    import_vocab(vocab_file)
-    import_grammar(grammar_file)
+    # import_vocab(vocab_file)
+    # import_grammar(grammar_file)
     print("All data imported successfully!")
 
 
-run_import(
-    kanji_file="data/kanji.json",
-    vocab_file="data/vocab.json",
-    grammar_file="data/grammar.json")
+# run_import(
+#     kanji_file="data/kanji.json",
+#     vocab_file="data/vocab.json",
+#     grammar_file="data/grammar.json")

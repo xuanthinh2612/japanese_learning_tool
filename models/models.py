@@ -97,15 +97,25 @@ class Kanji(db.Model):
     __tablename__ = "kanji"
 
     id = db.Column(db.Integer, primary_key=True)
+
+    # Core
     character = db.Column(db.String(1), unique=True, nullable=False)
 
-    onyomi = db.Column(db.String(255))
-    kunyomi = db.Column(db.String(255))
-    meaning = db.Column(db.Text)
+    # Readings
+    onyomi = db.Column(db.String(255))        # ア,カ
+    kunyomi = db.Column(db.String(255))       # つ.ぐ
+    hanviet = db.Column(db.Text)        # 🔥 SỬA Ở ĐÂY
 
+    # Meanings
+    meaning_en = db.Column(db.Text)
+    meaning_vi = db.Column(db.Text)
+
+    # Metadata
     strokes = db.Column(db.Integer)
     frequency = db.Column(db.Integer)
-    jlpt_level = db.Column(db.String(5))
+
+    # Examples (space separated kanji words)
+    examples = db.Column(db.Text)
 
     words = db.relationship(
         "Word",
