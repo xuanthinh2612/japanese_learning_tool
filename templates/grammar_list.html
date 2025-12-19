@@ -6,14 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<h1>📘 Japanese Grammar</h1>
-<h1>📘 Japanese Grammar</h1>
-<h1>📘 Japanese Grammar</h1>
-<h1>📘 Japanese Grammar</h1>
-<h1>📘 Japanese Grammar</h1>
-<h1>📘 Japanese Grammar</h1>
-<h1>📘 Japanese Grammar</h1>
-<h1>📘 Japanese Grammar</h1>
+<h1>📘 Ngữ pháp</h1>
 
 <div class="container grammar-container">
     {% for g in grammar_list %}
@@ -28,14 +21,25 @@
 {% if pagination.pages > 1 %}
 <div class="pagination">
     {% if pagination.has_prev %}
-        <a href="?page={{ pagination.prev_num }}">‹</a>
+        <a href="{{ url_for('grammar_list', page=pagination.prev_num) }}">« Prev</a>
     {% endif %}
 
-    <span class="current">Page {{ pagination.page }} / {{ pagination.pages }}</span>
+    {% for page_num in pagination.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+        {% if page_num %}
+            {% if page_num == pagination.page %}
+                <span class="current">{{ page_num }}</span>
+            {% else %}
+                <a href="{{ url_for('grammar_list', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+            <span class="dots">…</span>
+        {% endif %}
+    {% endfor %}
 
     {% if pagination.has_next %}
-        <a href="?page={{ pagination.next_num }}">›</a>
+        <a href="{{ url_for('grammar_list', page=pagination.next_num) }}">Next »</a>
     {% endif %}
 </div>
 {% endif %}
+
 {% endblock %}

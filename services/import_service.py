@@ -1,6 +1,6 @@
 import json
 from app import db
-from models import Kanji, Word, Grammar, Example, WordKanji, WordGrammar
+from models import Kanji, Word, Grammar, Example, WordKanji, WordGrammar, GrammarUsage
 
 # ===========================
 # HELPER FUNCTIONS
@@ -10,6 +10,21 @@ def load_json(file_path):
     """Load JSON file"""
     with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
+
+
+def load_text_json_lines(file_path):
+    """
+    Mỗi dòng trong file là 1 JSON object
+    """
+    with open(file_path, "r", encoding="utf-8") as f:
+        for line_no, line in enumerate(f, start=1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                yield json.loads(line)
+            except json.JSONDecodeError as e:
+                print(f"❌ JSON error at line {line_no}: {e}")
 
 
 def get_or_create_word(word_text):
@@ -83,48 +98,90 @@ def import_kanji(file_path):
 # IMPORT VOCABULARY
 # ===========================
 def import_vocab(file_path):
-    vocab_list = load_json(file_path)
+    for v in load_text_json_lines(file_path):
 
-    for v in vocab_list:
-        # Lấy hoặc tạo Word
-        word_text = v.get("k_ele", [{}])[0].get("keb", [None])[0] \
-                    or v.get("r_ele", [{}])[0].get("reb", [None])[0]
+        # ===========================
+        # WORD TEXT
+        # ===========================
+        word_text = None
+
+        if v.get("k_ele"):
+            word_text = v["k_ele"][0].get("keb", [None])[0]
+        if not word_text and v.get("r_ele"):
+            word_text = v["r_ele"][0].get("reb", [None])[0]
+
         if not word_text:
             continue
 
         word = get_or_create_word(word_text)
 
-        # Furigana
-        readings = [r.get("reb", [])[0] for r in v.get("r_ele", []) if r.get("reb")]
-        word.furigana = ",".join(readings) if readings else None
+        # ===========================
+        # FURIGANA
+        # ===========================
+        readings = []
+        for r in v.get("r_ele", []):
+            if r.get("reb"):
+                readings.append(r["reb"][0])
 
-        # Meanings
-        senses = v.get("sense", [])
+        word.furigana = " : ".join(readings) if readings else None
+
+        # ===========================
+        # POS
+        # ===========================
+        pos_set = set()
+        for s in v.get("sense", []):
+            for p in s.get("pos", []):
+                pos_set.add(p)
+
+        word.pos = ",".join(pos_set) if pos_set else None
+
+        # ===========================
+        # MEANINGS (EN + VI)
+        # ===========================
         meanings = []
-        for s in senses:
-            glosses = s.get("gloss", [])
-            for g in glosses:
-                meanings.append(g.get("en"))
-        word.meanings = "; ".join(filter(None, meanings))
+        for s in v.get("sense", []):
+            for g in s.get("gloss", []):
+                en = g.get("en")
+                vi = g.get("vi")
+                if en and vi:
+                    meanings.append(f"{en} ({vi})")
+                elif en:
+                    meanings.append(en)
+                elif vi:
+                    meanings.append(vi)
 
-        # TODO: level (nếu có)
+        word.meanings = "; ".join(meanings)
+
+        # ===========================
+        # LEVEL (chưa có → None)
+        # ===========================
         word.level = None
 
-        # Examples
-        for s in senses:
+        # ===========================
+        # EXAMPLES
+        # ===========================
+        for s in v.get("sense", []):
             for ex in s.get("example", []):
-                sentence = ex.get("ex_text", [None])[0]
-                translation = ex.get("ex_sent", [None])[0].get("_", "") if ex.get("ex_sent") else ""
-                if sentence:
+                jp = ex.get("ex_sent", [{}])[0].get("_")
+                trans = ""
+
+                # bản dịch EN / VI
+                if len(ex.get("ex_sent", [])) > 1:
+                    trans_obj = ex["ex_sent"][1].get("_", {})
+                    if isinstance(trans_obj, dict):
+                        trans = trans_obj.get("vi") or trans_obj.get("en")
+
+                if jp:
                     example = Example(
                         word=word,
-                        sentence=sentence,
-                        translation=translation
+                        sentence=jp,
+                        translation=trans,
+                        source="JMdict"
                     )
                     db.session.add(example)
 
     db.session.commit()
-    print(f"Imported {len(vocab_list)} Words.")
+    print("Import words completed.")
 
 
 # ===========================
@@ -133,31 +190,54 @@ def import_vocab(file_path):
 def import_grammar(file_path):
     grammar_list = load_json(file_path)
 
-    for g in grammar_list:
+    for g in grammar_list.values():  # vì không lấy key
         pattern = g.get("g")
         if not pattern:
             continue
 
-        grammar = get_or_create_grammar(pattern)
-        grammar.meaning = g.get("m", "")
-        # level nếu có
-        # grammar.level = g.get("level", None)
+        # ===== Grammar =====
+        grammar = Grammar.query.filter_by(pattern=pattern).first()
+        if not grammar:
+            grammar = Grammar(
+                pattern=pattern,
+                meaning=g.get("m", ""),
+                level=f"N{g.get('n')}" if g.get("n") else None
+            )
+            db.session.add(grammar)
+            db.session.flush()  # lấy grammar.id
 
-        # Examples
+        # ===== Grammar Usage =====
         for u in g.get("u", []):
+            usage_pattern = u.get("s")
+
+            usage = GrammarUsage(
+                grammar_id=grammar.id,
+                pattern=usage_pattern,
+                meaning=u.get("m", ""),
+                explanation=u.get("e", ""),
+                h_note=u.get("h", ""),
+                note=u.get("n", "")
+            )
+            db.session.add(usage)
+            db.session.flush()  # lấy usage.id
+
+            # ===== Examples =====
             for ex in u.get("ex", []):
                 sentence = ex.get("s")
-                translation = ex.get("m", "")
-                if sentence:
-                    example = Example(
-                        grammar=grammar,
-                        sentence=sentence,
-                        translation=translation
-                    )
-                    db.session.add(example)
+                if not sentence:
+                    continue
+
+                example = Example(
+                    grammar_usage_id=usage.id,
+                    sentence=sentence,
+                    translation=ex.get("m", ""),
+                    furigana=ex.get("t", ""),
+                    source="data"
+                )
+                db.session.add(example)
 
     db.session.commit()
-    print(f"Imported {len(grammar_list)} Grammar patterns.")
+    print("Import grammar completed.")
 
 
 # ===========================
@@ -165,8 +245,8 @@ def import_grammar(file_path):
 # ===========================
 def run_import(kanji_file, vocab_file, grammar_file):
     print("Starting import...")
-    import_kanji(kanji_file)
-    # import_vocab(vocab_file)
+    # import_kanji(kanji_file)
+    import_vocab(vocab_file)
     # import_grammar(grammar_file)
     print("All data imported successfully!")
 

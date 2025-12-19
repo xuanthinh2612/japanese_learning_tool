@@ -258,41 +258,6 @@ h1 {
     font-weight: 500;
 }
 
-/* Actions */
-.kanji-actions {
-    display: flex;
-    justify-content: center;
-    gap: 18px;
-    flex-wrap: wrap;
-}
-
-.btn {
-    padding: 12px 26px;
-    border-radius: 18px;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    border: none;
-    transition: all 0.3s ease;
-}
-
-.btn.primary {
-    background: linear-gradient(90deg, #3498db, #2ecc71);
-    color: #fff;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.2);
-}
-
-.btn.primary:hover {
-    transform: translateY(-3px);
-}
-
-.btn.ghost {
-    background: #fff;
-    color: #3498db;
-    text-decoration: none;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
-}
-
 /* Mobile */
 @media (max-width: 576px) {
     .kanji-big {

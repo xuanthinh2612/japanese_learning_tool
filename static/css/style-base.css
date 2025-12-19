@@ -66,6 +66,13 @@
     border-radius: 12px;
 }
 
+/* ===================== */
+/* Main Styles           */
+/* ===================== */
+/* main {
+    flex: 1;
+    padding-top: 80px;
+} */
 
 /* ===================== */
 /* Card Styles           */
@@ -141,3 +148,41 @@ footer a:hover {
     opacity: 0.85;
 }
 
+/* Button Actions */
+.btn-actions {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 26px;
+    border-radius: 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn.primary {
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+
+.btn.primary:hover {
+    transform: translateY(-5px);
+}
+
+.btn.ghost {
+    background: #fff;
+    color: #3498db;
+    text-decoration: none;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+.btn.ghost:hover {
+    transform: translateY(-5px);
+}

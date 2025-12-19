@@ -3,6 +3,7 @@ from app import app, db
 from models import Article, Word, WordOccurrence, LearningItem
 from flask import g, session
 from models import User
+from services import run_import
 
 
 @app.before_request
@@ -18,6 +19,11 @@ def index():
 
 @app.route("/top-words")
 def top_words():
+    # run_import(
+    # kanji_file="data/kanji.json",
+    # vocab_file="data/vocab.json",
+    # grammar_file="data/grammar.json")
+
     words_data = []
     for w, freq, word_id in (
         db.session.query(

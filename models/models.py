@@ -66,17 +66,17 @@ class Word(db.Model):
         cascade="all, delete-orphan"
     )
 
-    kanji = db.relationship(
-        "Kanji",
-        secondary="word_kanji",
-        back_populates="words"
-    )
+    # kanji = db.relationship(
+    #     "Kanji",
+    #     secondary="word_kanji",
+    #     back_populates="words"
+    # )
 
-    grammar = db.relationship(
-        "Grammar",
-        secondary="word_grammar",
-        back_populates="words"
-    )
+    # grammar = db.relationship(
+    #     "Grammar",
+    #     secondary="word_grammar",
+    #     back_populates="words"
+    # )
 
     learning_items = db.relationship(
         "LearningItem",
@@ -117,11 +117,11 @@ class Kanji(db.Model):
     # Examples (space separated kanji words)
     examples = db.Column(db.Text)
 
-    words = db.relationship(
-        "Word",
-        secondary="word_kanji",
-        back_populates="kanji"
-    )
+    # words = db.relationship(
+    #     "Word",
+    #     secondary="word_kanji",
+    #     back_populates="kanji"
+    # )
 
 
 # ==================================================
@@ -134,22 +134,36 @@ class Grammar(db.Model):
 
     pattern = db.Column(db.String(100), unique=True, nullable=False)
     meaning = db.Column(db.Text)
-    explanation = db.Column(db.Text)
     level = db.Column(db.String(10))  # N5–N1
 
-    examples = db.relationship(
-        "Example",
+    usages = db.relationship(
+        "GrammarUsage",
         back_populates="grammar",
         cascade="all, delete-orphan"
     )
 
-    words = db.relationship(
-        "Word",
-        secondary="word_grammar",
-        back_populates="grammar"
-    )
 
+# ==================================================
+# Grammar Usage (Dùng để lưu các ví dụ con, cách dùng của grammar)
+# ==================================================
+class GrammarUsage(db.Model):
+    __tablename__ = "grammar_usages"
 
+    id = db.Column(db.Integer, primary_key=True)
+    grammar_id = db.Column(db.Integer, db.ForeignKey("grammar.id"))
+
+    pattern = db.Column(db.Text)
+    meaning = db.Column(db.Text)
+    explanation = db.Column(db.Text)
+    note = db.Column(db.Text)
+    h_note = db.Column(db.Text)
+
+    grammar = db.relationship("Grammar", back_populates="usages")
+    examples = db.relationship(
+            "Example",
+            back_populates="grammar_usage"
+        )
+    
 # ==================================================
 # EXAMPLE (dùng chung cho Word & Grammar)
 # ==================================================
@@ -159,15 +173,15 @@ class Example(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     word_id = db.Column(db.Integer, db.ForeignKey("words.id"), nullable=True)
-    grammar_id = db.Column(db.Integer, db.ForeignKey("grammar.id"), nullable=True)
+    grammar_usage_id = db.Column(db.Integer, db.ForeignKey("grammar_usages.id"), nullable=True)
 
     sentence = db.Column(db.Text, nullable=False)
     translation = db.Column(db.Text)
+    furigana = db.Column(db.Text)
     source = db.Column(db.String(50)) # NHK / movie / meeting / manual
-    level = db.Column(db.String(10))
 
     word = db.relationship("Word", back_populates="examples")
-    grammar = db.relationship("Grammar", back_populates="examples")
+    grammar_usage = db.relationship("GrammarUsage", back_populates="examples")
 
 
 # ==================================================

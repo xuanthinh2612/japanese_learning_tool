@@ -20,21 +20,34 @@
 
     <div class="grammar-section">
         <h3>🧠 Explanation</h3>
-        <p>{{ grammar.explanation }}</p>
-    </div>
+        {% if grammar.usages %}
+            {% for usage in grammar.usages %}
+                <p>{{ usage.pattern }}</p>
+                <p>{{ usage.meaning }}</p>
+                <p>{{ usage.explanation }}</p>
+                <p>{{ usage.h_note }}</p>
+                <p>{{ usage.note }}</p>
 
-    {% if grammar.examples %}
-    <div class="grammar-section">
-        <h3>✏ Examples</h3>
-        <ul class="grammar-examples">
-            {% for ex in grammar.examples %}
-                <li>{{ ex.content }}</li>
+                <div class="grammar-section">
+                    <h3>✏ Examples {{loop.index}}</h3>
+                    <ul class="grammar-examples">
+                        {% for ex in usage.examples %}
+                            <li><b>{{ ex.sentence }}</b></li>
+                            <p>{{ ex.furigana }}</p>
+                            <p>{{ ex.translation }}</p>
+                        {% endfor %}
+                    </ul>
+                </div>
             {% endfor %}
-        </ul>
+        {% endif %}
     </div>
-    {% endif %}
+    
+    <!-- Actions -->
+    <div class="btn-actions">
+        <button class="btn primary">⭐ Thêm vào danh sách học</button>
+        <a href="/grammar" class="btn ghost">← Quay lại danh sách</a>
+    </div>
 
-    <a href="/grammar" class="back-btn">← Back to Grammar List</a>
 
 </div>
 {% endblock %}
