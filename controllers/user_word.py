@@ -1,8 +1,8 @@
 from flask import render_template, request, redirect
 from app import app, db
-from models import Article, Word, WordOccurrence, User, LearningItem
+from models import Article, Word, WordOccurrence, User, LearningItem, WordForm, WordReading
 from controllers.helper import extract_words
-from flask import g, session, jsonify
+from flask import g, session, jsonify, flash
 
 
 @app.before_request
@@ -84,22 +84,64 @@ def word_detail(word):
         )
         .join(WordOccurrence)
         .join(Word)
-        .filter(Word.word == word)
+        .join(WordForm)
+        .filter(WordForm.form == word)
         .all()
     )
+    print(data)
     return render_template("word.html", word=word, articles=data, current_source="daily")
 
 
-# Tra từ API
-@app.route("/api/word/<word>", methods=["GET", "POST"])
-def get_word(word):
-    word_obj = Word.query.filter_by(word=word).first_or_404()  # tìm theo column 'word'
-    examples = [{"sentence": e.sentence, "translation": e.translation} for e in word_obj.examples]
+# API Search 
+@app.route("/api/word/<keyword>", methods=["GET"])
+def get_word(keyword):
+    from sqlalchemy import or_
+
+    word_obj = (
+        Word.query
+        .outerjoin(WordForm)
+        .outerjoin(WordReading)
+        .filter(
+            or_(
+                WordForm.form == keyword,
+                WordReading.reading == keyword
+            )
+        )
+        .first_or_404()
+    )
+
+    # forms
+    forms = [f.form for f in word_obj.forms]
+
+    # readings
+    readings = [r.reading for r in word_obj.readings]
+
+    # senses
+    senses = []
+    for s in word_obj.senses:
+        senses.append({
+            "pos": s.pos,
+            "misc": s.misc,
+            "antonym": s.antonym,
+            "xref": s.xref,
+            "meanings": {
+                "en": [g.means_en for g in s.glosses if g.means_en],
+                "vi": [g.means_vi for g in s.glosses if g.means_vi],
+            },
+            "examples": [
+                {
+                    "sentence": e.sentence,
+                    "translation_en": e.translation_en,
+                    "translation_vi": e.translation_vi
+                }
+                for e in s.examples
+            ]
+        })
+
     return jsonify({
         "id": word_obj.id,
-        "word": word_obj.word,
-        "furigana": word_obj.furigana,
-        "pos": word_obj.pos,
-        "meanings": word_obj.meanings,
-        "examples": examples
+        "ent_seq": word_obj.ent_seq,
+        "forms": forms,
+        "readings": readings,
+        "senses": senses
     })

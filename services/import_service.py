@@ -1,6 +1,6 @@
 import json
 from app import db
-from models import Kanji, Word, Grammar, Example, WordKanji, WordGrammar, GrammarUsage
+from models import Kanji, Word, Grammar, Example, WordExample, WordForm, WordGloss, WordReading, WordSense, Article
 
 # ===========================
 # HELPER FUNCTIONS
@@ -101,87 +101,102 @@ def import_vocab(file_path):
     for v in load_text_json_lines(file_path):
 
         # ===========================
-        # WORD TEXT
+        # WORD (entry)
         # ===========================
-        word_text = None
-
-        if v.get("k_ele"):
-            word_text = v["k_ele"][0].get("keb", [None])[0]
-        if not word_text and v.get("r_ele"):
-            word_text = v["r_ele"][0].get("reb", [None])[0]
-
-        if not word_text:
+        ent_seq = v.get("ent_seq", [None])[0]
+        if not ent_seq:
             continue
 
-        word = get_or_create_word(word_text)
+        # tránh import trùng
+        word = Word.query.filter_by(ent_seq=ent_seq).first()
+        if word:
+            continue
+
+        word = Word(ent_seq=ent_seq)
+        db.session.add(word)
 
         # ===========================
-        # FURIGANA
+        # WORD FORMS (k_ele)
         # ===========================
-        readings = []
+        for k in v.get("k_ele", []):
+            for keb in k.get("keb", []):
+                form = WordForm(
+                    word=word,
+                    form=keb,
+                    priority=",".join(k.get("ke_pri", [])) if k.get("ke_pri") else None
+                )
+                db.session.add(form)
+
+        # ===========================
+        # WORD READINGS (r_ele)
+        # ===========================
         for r in v.get("r_ele", []):
-            if r.get("reb"):
-                readings.append(r["reb"][0])
-
-        word.furigana = " : ".join(readings) if readings else None
+            for reb in r.get("reb", []):
+                reading = WordReading(
+                    word=word,
+                    reading=reb,
+                    info=",".join(r.get("re_inf", [])) if r.get("re_inf") else None,
+                    priority=",".join(r.get("re_pri", [])) if r.get("re_pri") else None
+                )
+                db.session.add(reading)
 
         # ===========================
-        # POS
+        # WORD SENSES
         # ===========================
-        pos_set = set()
         for s in v.get("sense", []):
-            for p in s.get("pos", []):
-                pos_set.add(p)
 
-        word.pos = ",".join(pos_set) if pos_set else None
+            sense = WordSense(
+                word=word,
+                pos=",".join(s.get("pos", [])) if s.get("pos") else None,
+                misc=",".join(s.get("misc", [])) if s.get("misc") else None,
+                antonym=",".join(s.get("ant", [])) if s.get("ant") else None,
+                xref=",".join(s.get("xref", [])) if s.get("xref") else None
+            )
+            db.session.add(sense)
 
-        # ===========================
-        # MEANINGS (EN + VI)
-        # ===========================
-        meanings = []
-        for s in v.get("sense", []):
+            # ===========================
+            # GLOSSES
+            # ===========================
             for g in s.get("gloss", []):
-                en = g.get("en")
-                vi = g.get("vi")
-                if en and vi:
-                    meanings.append(f"{en} ({vi})")
-                elif en:
-                    meanings.append(en)
-                elif vi:
-                    meanings.append(vi)
+                db.session.add(
+                    WordGloss(
+                        sense=sense,
+                        means_vi=g.get("vi"),
+                        means_en=g.get("en")
+                    )
+                )
 
-        word.meanings = "; ".join(meanings)
-
-        # ===========================
-        # LEVEL (chưa có → None)
-        # ===========================
-        word.level = None
-
-        # ===========================
-        # EXAMPLES
-        # ===========================
-        for s in v.get("sense", []):
+            # ===========================
+            # EXAMPLES
+            # ===========================
             for ex in s.get("example", []):
-                jp = ex.get("ex_sent", [{}])[0].get("_")
-                trans = ""
+                ex_text = ex.get("ex_text", [None])[0]
 
-                # bản dịch EN / VI
-                if len(ex.get("ex_sent", [])) > 1:
-                    trans_obj = ex["ex_sent"][1].get("_", {})
-                    if isinstance(trans_obj, dict):
-                        trans = trans_obj.get("vi") or trans_obj.get("en")
+                jp = None
+                en = None
+                vi = None
+
+                for sent in ex.get("ex_sent", []):
+                    if sent.get("$", {}).get("xml:lang") == "jpn":
+                        jp = sent.get("_")
+                    elif sent.get("$", {}).get("xml:lang") == "eng":
+                        data = sent.get("_")
+                        if isinstance(data, dict):
+                            en = data.get("en")
+                            vi = data.get("vi")
 
                 if jp:
-                    example = Example(
-                        word=word,
+                    example = WordExample(
+                        sense=sense,
+                        ex_text=ex_text,
                         sentence=jp,
-                        translation=trans,
-                        source="JMdict"
+                        translation_en=en,
+                        translation_vi=vi
                     )
                     db.session.add(example)
 
     db.session.commit()
-    print("Import words completed.")
+    print("Import vocabulary completed.")
 
 
 # ===========================
@@ -243,15 +258,31 @@ def import_grammar(file_path):
 # ===========================
 # MAIN IMPORT FUNCTION
 # ===========================
+# def run_import():
 def run_import(kanji_file, vocab_file, grammar_file):
     print("Starting import...")
     # import_kanji(kanji_file)
-    import_vocab(vocab_file)
+    # import_vocab(vocab_file)
     # import_grammar(grammar_file)
+    # articles = Article.query.all()
+    # for a in articles:
+    #     db.session.delete(a)
+
+    # words = Word.query.all()
+    # for a in words:
+    #     db.session.delete(a)
+
+    db.session.commit()
     print("All data imported successfully!")
 
 
-# run_import(
-#     kanji_file="data/kanji.json",
-#     vocab_file="data/vocab.json",
-#     grammar_file="data/grammar.json")
+if __name__ == "__main__":
+    from app import app
+
+    with app.app_context():
+        # run_import(
+        #     kanji_file="data/kanji.json",
+        #     vocab_file="data/vocab.json",
+        #     grammar_file="data/grammar.json")
+        db.session.query(Article).delete()
+        db.session.commit()

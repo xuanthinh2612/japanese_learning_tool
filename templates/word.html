@@ -155,11 +155,6 @@ h1 {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-#article-list li:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
 .article-header {
     display: flex;
     justify-content: space-between;
@@ -213,18 +208,87 @@ h1 {
 }
 
 /* ===================== */
-/* Popup Word        */
+/* Importance Word        */
 /* ===================== */
 .important-word {
     cursor: pointer;
     text-decoration: underline;
 }
 
+/* ===================== */
+/* Word Popup            */
+/* ===================== */
 #word-popup {
-    z-index: 999;
-    max-width: 300px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    position: absolute;
+    z-index: 9999;
+    width: 280px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    border: 1px solid rgba(0,0,0,0.05);
+    padding: 14px 16px;
+    animation: popupFade 0.18s ease-out;
 }
+
+/* Header */
+.word-popup-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Reading */
+.word-popup-reading {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+/* Sense block */
+.word-popup-sense {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed #e5e5e5;
+}
+
+/* POS badge */
+.word-popup-pos {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(52, 152, 219, 0.12);
+    color: #3498db;
+    margin-bottom: 4px;
+}
+
+/* Meanings */
+.word-popup-mean {
+    font-size: 0.88rem;
+    line-height: 1.45;
+}
+
+.word-popup-mean.vi {
+    color: #777;
+    font-style: italic;
+}
+
+/* Fade animation */
+@keyframes popupFade {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
 </style>
 </head>
 
@@ -293,7 +357,6 @@ h1 {
 {% endfor %}
 </ul>
 
-<a href="/" class="back-link">← Back to Home</a>
 <div id="word-popup" style="display:none; position:absolute; background:white; border:1px solid #ccc; padding:10px;"></div>
 
 <script>
@@ -312,28 +375,79 @@ h1 {
 </script>
 
 <script>
-    document.querySelector('.article-content').addEventListener('click', async (e) => {
-        if (e.target.classList.contains('word')) {
-            const wordText = e.target.dataset.word;
-            console.log("Clicked", wordText); // test
-            const res = await fetch(`/api/word/${encodeURIComponent(wordText)}`);
-            const data = await res.json();
+    document.addEventListener("click", async (e) => {
+        const popup = document.getElementById("word-popup");
 
-            const popup = document.getElementById('word-popup');
-            let html = `<strong>${data.word}</strong><br><em>${data.meanings}</em>`;
-            popup.innerHTML = html;
-            popup.style.left = e.pageX + 'px';
-            popup.style.top = e.pageY + 'px';
-            popup.style.display = 'block';
+        // click vào word
+        if (e.target.classList.contains("word")) {
+            e.stopPropagation();
+
+            const keyword = e.target.dataset.word;
+
+            try {
+                const res = await fetch(`/api/word/${encodeURIComponent(keyword)}`);
+                if (!res.ok) return;
+
+                const data = await res.json();
+
+                // ===== render popup =====
+                let html = "";
+
+                // Title (kanji)
+                html += `<div class="word-popup-title">${data.forms.join("・")}</div>`;
+
+                // Reading
+                if (data.readings.length) {
+                    html += `<div class="word-popup-reading">${data.readings.join("・")}</div>`;
+                }
+
+                // Senses
+                let before_pos = "";
+
+                data.senses.forEach((s, idx) => {
+                    html += `<div class="word-popup-sense">`;
+                    
+                    if (s.pos && s.pos != before_pos) {
+                        html += `<div class="word-popup-pos">${s.pos}</div>`;
+                        before_pos = s.pos;
+                    }
+
+                    if (s.meanings.vi?.length) {
+                        html += `<div class="word-popup-mean vi">${s.meanings.vi.join("; ")}</div>`;
+                    }
+
+                    html += `</div>`;
+                });
+
+                popup.innerHTML = html;
+                popup.style.left = e.pageX + 10 + "px";
+                popup.style.top = e.pageY + 10 + "px";
+                popup.style.display = "block";
+
+            } catch (err) {
+                console.error(err);
+            }
+
+            return;
+        }
+
+        // click ngoài → ẩn popup
+        popup.style.display = "none";
+    });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("span").forEach(span => {
+        const text = span.textContent
+            .replace(/\u3000/g, " ")  // đổi space Nhật
+            .trim();
+
+        // nếu sau khi trim mà rỗng => không có text thật
+        if (text === "") {
+            span.replaceWith(document.createElement("br"));
         }
     });
-
-    // click ngoài ẩn popup
-    document.addEventListener('click', e => {
-        if (!e.target.classList.contains('word')) {
-            document.getElementById('word-popup').style.display = 'none';
-        }
-    });
+});
 </script>
 </body>
 </html>

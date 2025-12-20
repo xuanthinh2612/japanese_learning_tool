@@ -1,4 +1,26 @@
 /* ===================== */
+/* General Styles        */
+/* ===================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===================== */
+/* Card Container        */
+/* ===================== */
+.container {
+    max-width: 900px;
+    margin: 80px auto 50px; /* khoảng cách cho navbar fixed */
+    padding: 0 15px;
+}
+
+/* ===================== */
 /* Navbar Styles         */
 /* ===================== */
 .navbar {
@@ -185,4 +207,46 @@ footer a:hover {
 
 .btn.ghost:hover {
     transform: translateY(-5px);
+}
+
+
+/* ===================== */
+/* Pagination            */
+/* ===================== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 30px 0 80px;
+    flex-wrap: wrap;
+}
+
+.pagination a,
+.pagination span {
+    padding: 7px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    background: #fff;
+    color: #3498db;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    color: #fff;
+}
+
+.pagination .current {
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    color: #fff;
+}
+
+.pagination .dots {
+    background: none;
+    box-shadow: none;
+    color: #777;
 }

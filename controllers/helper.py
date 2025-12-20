@@ -1,6 +1,7 @@
 # helper.py
 from collections import Counter
 from sudachipy import dictionary, tokenizer as sudachi_tokenizer
+from models import Word, WordForm
 import re
 
 
@@ -27,6 +28,7 @@ def extract_words(text: str):
     for t in tokens:
         pos1, pos2 = t.part_of_speech()[0], t.part_of_speech()[1]
         surface = t.surface()
+        word_dict = t.dictionary_form()
 
         # bỏ rác
         if pos1 in STOP_POS:
@@ -58,7 +60,7 @@ def extract_words(text: str):
         if pos1 == "動詞" and surface in AUX_VERBS:
             continue
 
-        words.append((surface, pos1))
+        words.append((word_dict, pos1))
 
     return Counter(words)
 
@@ -75,14 +77,19 @@ def extract_full_words(text: str):
     for t in tokens:
         pos = t.part_of_speech()[0]
         surface = t.surface()
+        word_dict = t.dictionary_form()
 
+        is_exist = (Word.query
+            .join(WordForm)
+            .filter(WordForm.form == word_dict)
+            .first()
+        )
          # Thêm markup chỉ những từ vựng mới có class important-word
-        if pos in KEEP_POS and pos not in COMMON_JUNK and pos not in STOP_POS and pos not in AUX_VERBS :
-            span = f'<span class="word important-word" data-word="{surface}">{surface}</span>'
+        if is_exist and pos in KEEP_POS and pos not in COMMON_JUNK and pos not in STOP_POS and pos not in AUX_VERBS :
+            span = f'<span class="word important-word" data-word="{word_dict}">{surface}</span>'
         else:
-            span = f'<span class="word" data-word="{surface}">{surface}</span>'
+            span = f'<span class="word" >{surface}</span>'
         
-       
         new_content += span
     
     return new_content

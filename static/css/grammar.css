@@ -94,7 +94,7 @@ h1 {
 .grammar-pattern-large {
     font-size: 3rem;
     font-weight: 900;
-    background: linear-gradient(90deg, #3498db, #2ecc71);
+    background: rgb(8, 132, 185);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -174,47 +174,6 @@ h1 {
     padding: 0px 10px;
     color: #4b5563;
     margin-top: 2px;
-}
-
-/* ===================== */
-/* Pagination            */
-/* ===================== */
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin: 30px 0 80px;
-    flex-wrap: wrap;
-}
-
-.pagination a,
-.pagination span {
-    padding: 7px 12px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    background: #fff;
-    color: #3498db;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
-}
-
-.pagination a:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(90deg, #3498db, #2ecc71);
-    color: #fff;
-}
-
-.pagination .current {
-    background: linear-gradient(90deg, #3498db, #2ecc71);
-    color: #fff;
-}
-
-.pagination .dots {
-    background: none;
-    box-shadow: none;
-    color: #777;
 }
 
 /* ===================== */

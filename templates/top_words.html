@@ -227,17 +227,23 @@ h1 {
 <h1>Top Words</h1>
 
 <ul id="word-list">
-{% for w, freq, word_id, li_status in words %}
-<li data-id="{{ word_id }}">
+{% for w in words %}
+<li data-id="{{ w.word_id }}">
     <div>
-        <a href="/word/{{ w }}">{{ w }}</a> ({{ freq }})
+        <a href="/word/{{ w.text }}">{{ w.text }}</a> ({{ w.freq }})
+
         {% if g.user %}
         <span class="status">
-            {% if li_status == None %}+ Add
-            {% elif li_status == "learning" %}📘 Đang học
-            {% elif li_status=="reviewing" %}🔁 Đang ôn
-            {% elif li_status=="mastered" %}✔ Đã thuộc
-            {% elif li_status=="dropped" %}❌ Đã bỏ
+            {% if w.learning_status == None %}
+                + Add
+            {% elif w.learning_status == "learning" %}
+                📘 Đang học
+            {% elif w.learning_status == "reviewing" %}
+                🔁 Đang ôn
+            {% elif w.learning_status == "mastered" %}
+                ✔ Đã thuộc
+            {% elif w.learning_status == "dropped" %}
+                ❌ Đã bỏ
             {% endif %}
         </span>
         {% endif %}
@@ -245,17 +251,21 @@ h1 {
 
     {% if g.user %}
     <span class="actions">
-        {% if li_status == None %}
+        {% if w.learning_status == None %}
             <button class="action-btn" data-action="add">+ Add</button>
-        {% elif li_status=="learning" %}
+
+        {% elif w.learning_status == "learning" %}
             <button class="action-btn" data-action="drop">❌ Bỏ</button>
             <button class="action-btn" data-action="reviewing">🔁 Đang ôn</button>
-        {% elif li_status=="reviewing" %}
+
+        {% elif w.learning_status == "reviewing" %}
             <button class="action-btn" data-action="drop">❌ Bỏ</button>
             <button class="action-btn" data-action="mastered">✔ Đã thuộc</button>
-        {% elif li_status=="mastered" %}
+
+        {% elif w.learning_status == "mastered" %}
             <button class="action-btn" data-action="reset">↩ Học lại</button>
-        {% elif li_status=="dropped" %}
+
+        {% elif w.learning_status == "dropped" %}
             <button class="action-btn" data-action="reset">↩ Học lại</button>
         {% endif %}
     </span>
@@ -263,6 +273,7 @@ h1 {
 </li>
 {% endfor %}
 </ul>
+
 
 <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"></div>
 

@@ -3,7 +3,7 @@ from app import app, db
 from models import Article, Word, WordOccurrence, LearningItem
 from .helper import extract_words, extract_full_words
 from flask import g, session
-from models import User
+from models import User, WordForm
 
 
 @app.before_request
@@ -27,12 +27,15 @@ def add_article():
         word_counts = extract_words(article_content)
 
         for (word_text, pos), count in word_counts.items():
-            word = Word.query.filter_by(word=word_text).first()
-            if not word:
-                word = Word(word=word_text, pos=pos)
-                db.session.add(word)
-                db.session.commit()
+            word = (Word.query
+                .join(WordForm)
+                .filter(WordForm.form == word_text)
+                .first()
+                )
 
+            if not word:
+                continue
+            
             occ = WordOccurrence.query.filter_by(
                 word_id=word.id,
                 article_id=article.id

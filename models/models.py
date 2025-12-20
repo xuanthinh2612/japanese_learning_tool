@@ -29,7 +29,7 @@ class User(db.Model):
 
 
 # ==================================================
-# ARTICLE (giữ nguyên)
+# ARTICLE
 # ==================================================
 class Article(db.Model):
     __tablename__ = "articles"
@@ -54,29 +54,8 @@ class Word(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    word = db.Column(db.String(100), unique=True, nullable=False)
-    furigana = db.Column(db.String(100))
-    pos = db.Column(db.String(50))
-    meanings = db.Column(db.Text)
+    ent_seq = db.Column(db.String(100), unique=True)  # 1153930
     level = db.Column(db.String(10))  # N5–N1
-
-    examples = db.relationship(
-        "Example",
-        back_populates="word",
-        cascade="all, delete-orphan"
-    )
-
-    # kanji = db.relationship(
-    #     "Kanji",
-    #     secondary="word_kanji",
-    #     back_populates="words"
-    # )
-
-    # grammar = db.relationship(
-    #     "Grammar",
-    #     secondary="word_grammar",
-    #     back_populates="words"
-    # )
 
     learning_items = db.relationship(
         "LearningItem",
@@ -89,6 +68,117 @@ class Word(db.Model):
         back_populates="word",
         cascade="all, delete-orphan"
     )
+
+    forms = db.relationship(
+        "WordForm",
+        back_populates="word",
+        cascade="all, delete-orphan"
+    )
+
+    readings = db.relationship(
+        "WordReading",
+        back_populates="word",
+        cascade="all, delete-orphan"
+    )
+
+    senses = db.relationship(
+        "WordSense",
+        back_populates="word",
+        cascade="all, delete-orphan"
+    )
+
+
+
+# ==================================================
+# Word Form (Kanji)
+# ==================================================
+class WordForm(db.Model):
+    __tablename__ = "word_forms"
+
+    id = db.Column(db.Integer, primary_key=True)
+    word_id = db.Column(db.Integer, db.ForeignKey("words.id"))
+
+    form = db.Column(db.String(255))  # 安全
+    priority = db.Column(db.String(255))  # ichi1 news1 nf01
+
+    word = db.relationship("Word", back_populates="forms")
+
+
+# ==================================================
+# Word Reading (firigana)
+# ==================================================
+class WordReading(db.Model):
+    __tablename__ = "word_readings"
+
+    id = db.Column(db.Integer, primary_key=True)
+    word_id = db.Column(db.Integer, db.ForeignKey("words.id"))
+
+    reading = db.Column(db.String(255))  # あんぜん
+    info = db.Column(db.String(255))      # ok
+    priority = db.Column(db.String(255))
+
+    word = db.relationship("Word", back_populates="readings")
+
+
+# ==================================================
+# Word Sense (multiple meanings)
+# ==================================================
+class WordSense(db.Model):
+    __tablename__ = "word_senses"
+
+    id = db.Column(db.Integer, primary_key=True)
+    word_id = db.Column(db.Integer, db.ForeignKey("words.id"))
+
+    pos = db.Column(db.Text)  # n, adj-na
+    misc = db.Column(db.String(100)) # abbr
+    antonym = db.Column(db.String(255))
+    xref = db.Column(db.Text)
+
+    word = db.relationship("Word", back_populates="senses")
+    glosses = db.relationship(
+        "WordGloss",
+        back_populates="sense",
+        cascade="all, delete-orphan"
+    )
+
+    examples = db.relationship(
+        "WordExample",
+        back_populates="sense",
+        cascade="all, delete-orphan"
+    )
+
+
+# ==================================================
+# Word Gloss (meaning)
+# ==================================================
+class WordGloss(db.Model):
+    __tablename__ = "word_glosses"
+
+    id = db.Column(db.Integer, primary_key=True)
+    sense_id = db.Column(db.Integer, db.ForeignKey("word_senses.id"))
+
+    means_en = db.Column(db.Text)
+    means_vi = db.Column(db.Text)
+
+    sense = db.relationship("WordSense", back_populates="glosses")
+
+
+# ==================================================
+# Word Example (example for word only)
+# ==================================================
+class WordExample(db.Model):
+    __tablename__ = "word_examples"
+
+    id = db.Column(db.Integer, primary_key=True)
+    sense_id = db.Column(db.Integer, db.ForeignKey("word_senses.id"))
+
+    ex_text = db.Column(db.Text)
+    sentence = db.Column(db.Text)
+    translation_en = db.Column(db.Text)
+    translation_vi = db.Column(db.Text)
+
+    sense = db.relationship("WordSense", back_populates="examples")
+
 
 # ==================================================
 # KANJI
@@ -104,7 +194,7 @@ class Kanji(db.Model):
     # Readings
     onyomi = db.Column(db.String(255))        # ア,カ
     kunyomi = db.Column(db.String(255))       # つ.ぐ
-    hanviet = db.Column(db.Text)        # 🔥 SỬA Ở ĐÂY
+    hanviet = db.Column(db.Text)        # 🔥
 
     # Meanings
     meaning_en = db.Column(db.Text)
@@ -116,12 +206,6 @@ class Kanji(db.Model):
 
     # Examples (space separated kanji words)
     examples = db.Column(db.Text)
-
-    # words = db.relationship(
-    #     "Word",
-    #     secondary="word_kanji",
-    #     back_populates="kanji"
-    # )
 
 
 # ==================================================
@@ -172,7 +256,6 @@ class Example(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    word_id = db.Column(db.Integer, db.ForeignKey("words.id"), nullable=True)
     grammar_usage_id = db.Column(db.Integer, db.ForeignKey("grammar_usages.id"), nullable=True)
 
     sentence = db.Column(db.Text, nullable=False)
@@ -180,43 +263,42 @@ class Example(db.Model):
     furigana = db.Column(db.Text)
     source = db.Column(db.String(50)) # NHK / movie / meeting / manual
 
-    word = db.relationship("Word", back_populates="examples")
     grammar_usage = db.relationship("GrammarUsage", back_populates="examples")
 
 
 # ==================================================
 # ASSOCIATION TABLES
 # ==================================================
-class WordKanji(db.Model):
-    __tablename__ = "word_kanji"
+# class WordKanji(db.Model):
+#     __tablename__ = "word_kanji"
 
-    word_id = db.Column(
-        db.Integer,
-        db.ForeignKey("words.id"),
-        primary_key=True
-    )
+#     word_id = db.Column(
+#         db.Integer,
+#         db.ForeignKey("words.id"),
+#         primary_key=True
+#     )
 
-    kanji_id = db.Column(
-        db.Integer,
-        db.ForeignKey("kanji.id"),
-        primary_key=True
-    )
+#     kanji_id = db.Column(
+#         db.Integer,
+#         db.ForeignKey("kanji.id"),
+#         primary_key=True
+#     )
 
 
-class WordGrammar(db.Model):
-    __tablename__ = "word_grammar"
+# class WordGrammar(db.Model):
+#     __tablename__ = "word_grammar"
 
-    word_id = db.Column(
-        db.Integer,
-        db.ForeignKey("words.id"),
-        primary_key=True
-    )
+#     word_id = db.Column(
+#         db.Integer,
+#         db.ForeignKey("words.id"),
+#         primary_key=True
+#     )
 
-    grammar_id = db.Column(
-        db.Integer,
-        db.ForeignKey("grammar.id"),
-        primary_key=True
-    )
+#     grammar_id = db.Column(
+#         db.Integer,
+#         db.ForeignKey("grammar.id"),
+#         primary_key=True
+#     )
 
 
 # ==================================================

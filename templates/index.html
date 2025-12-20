@@ -15,13 +15,10 @@
         <a href="/my_learning" class="card"><span class="icon">📝</span>Từ của tôi</a>
         <a href="/kanji" class="card"><span class="icon">🎯</span>Kanji</a>
         <a href="/grammar" class="card"><span class="icon">💡</span>Grammar</a>
-        <a href="/page5" class="card"><span class="icon">🧩</span>Practice</a>
-        <a href="/page6" class="card"><span class="icon">📊</span>Stats</a>
-        <a href="/page1" class="card"><span class="icon">📚</span>Vocabulary</a>
-        <a href="/page2" class="card"><span class="icon">📝</span>Grammar</a>
-        <a href="/page3" class="card"><span class="icon">🎯</span>Top Words</a>
-        <a href="/page4" class="card"><span class="icon">💡</span>Kanji</a>
-        <a href="/page5" class="card"><span class="icon">🧩</span>Practice</a>
+        <!-- Addmin add article -->
+        {% if g.user and g.user.role == 'admin' %}
+            <a href="/add-article" class="card"><span class="icon">➕</span>Add Article</a>
+        {% endif %}
         <a href="/page6" class="card"><span class="icon">📊</span>Stats</a>
     </div>
 {% endblock %}

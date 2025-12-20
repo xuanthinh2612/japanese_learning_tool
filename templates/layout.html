@@ -29,9 +29,6 @@
     <div class="user-actions">
     {% if g.user %}
         <span class="username">👤 {{ g.user.username }}</span>
-        {% if g.user.role == 'admin' %}
-            <a href="/add-article">➕ Add Article</a>
-        {% endif %}
         <a href="/logout">🚪 Logout</a>
     {% else %}
         <a href="/login">🔑 Login</a>
