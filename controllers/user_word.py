@@ -166,27 +166,42 @@ def get_word(keyword):
 
 @app.route("/api/my_learning")
 def api_my_learning():
-    status = request.args.get("status", "learning")
+    
     if g.user is None:
         return jsonify(
             {
+                "success": False,
                 "status": "error",
                 "message": "Bạn chưa login"
              }
         )
-    
-    items = LearningItem.query.filter_by(user_id=g.user.id, status=status).join(Word).all()
 
-    print()
+    status = request.args.get("status", "learning")
+    page = request.args.get("page", 1, type=int)
+    per_page = 50
+    pagination = (
+        LearningItem.query
+        .filter_by(user_id=g.user.id, status=status)
+        .join(Word)
+        .paginate(page=page, per_page=per_page, error_out=False)
+    )
     
     return jsonify({
         "success": True,
         "data": 
-        [
-        {
-            "word_id": i.word.id,
-            "status": i.status,
-            "word": i.word.forms[0].form,
-        }
-        for i in items
-    ]})
+            [
+            {
+                "word_id": i.word.id,
+                "status": i.status,
+                "word": i.word.forms[0].form,
+            }
+            for i in pagination.items
+            ],
+            "pagination": {
+                "page": pagination.page,
+                "pages": pagination.pages,
+                "has_next": pagination.has_next,
+                "has_prev": pagination.has_prev,
+                "total": pagination.total
+            }
+        })

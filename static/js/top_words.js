@@ -62,6 +62,7 @@ document.addEventListener("click", function(e) {
                 // Thêm attribute disabled
                 btn.setAttribute("disabled", "true");
                 btn.innerText = "Đã thêm";
+                btn.classList.remove("add-btn");
                 updateStatus(parentCard);
             }
         }

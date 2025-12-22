@@ -176,10 +176,10 @@ tr:hover {
     font-weight: 700;
 }
 
-.status.learning { background: #dbeafe; color: #1e40af; }
-.status.reviewing { background: #fef3c7; color: #92400e; }
+.status.learning { background: #dfecfe; color: #0025a0; }
+.status.reviewing { background: #ffddc5; color: #9e5a00; }
 .status.mastered { background: #dcfce7; color: #166534; }
-.status.dropped { background: #fee2e2; color: #991b1b; }
+.status.dropped { background: #fee2e2; color: #bb1313; }
 .status.none { background: #e5e7eb; color: #374151; }
 
 
@@ -227,18 +227,10 @@ tr:hover {
 
 /* status chỉ là text */
 .topword-status .status {
-    background: none;
-    padding: 0;
+    padding: 2px 5px;
     font-size: 0.75rem;
     font-weight: 700;
 }
-
-/* màu chữ theo trạng thái – nhẹ */
-.status.learning  { color: #2563eb; }
-.status.reviewing { color: #0f766e; }
-.status.mastered  { color: #15803d; }
-.status.dropped   { color: #9f1239; }
-.status.none      { color: #6b7280; }
 
 .topword-freq {
     position: absolute;
@@ -282,15 +274,4 @@ tr:hover {
 .topword-text:hover {
     text-decoration: underline;
     color: #018aa6;
-}
-
-/* ========================= */
-/* Status colors (giữ lại)   */
-/* ========================= */
-
-.status {
-    font-size: 0.7rem;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-weight: 700;
 }

@@ -11,13 +11,11 @@
 <h1>🔥 Top Words</h1>
 
 <div class="container topword-container">
-{% for w in words %}
+    {% for w in words %}
     <div class="card topword-card">
 
         <!-- WORD -->
-        <div class="topword-text"
-         data-href="/word/{{ w.text }}"
-         data-id="{{ w.id }}">
+        <div class="topword-text" data-href="/word/{{ w.text }}" data-id="{{ w.id }}">
             {{ w.text }}
         </div>
 
@@ -29,29 +27,46 @@
         {% if g.user %}
         <div class="topword-status">
             {% if w.status == None %}
-                <span class="status none">+ Chưa học</span>
+            <span class="status none">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" style="width: 10px; fill:rgb(60, 60, 60)">
+                    <path d="M352 128C352 110.3 337.7 96 320 96C302.3 96 288 110.3 288 128L288 288L128 288C110.3 288 96 302.3 96 320C96 337.7 110.3 352 128 352L288 352L288 512C288 529.7 302.3 544 320 544C337.7 544 352 529.7 352 512L352 352L512 352C529.7 352 544 337.7 544 320C544 302.3 529.7 288 512 288L352 288L352 128z"/>
+                </svg>
+                Chưa học</span>
             {% elif w.status == "learning" %}
-                <span class="status learning">📘 Đang học</span>
+            <span class="status learning">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" style="width: 10px; fill:midnightblue ">
+                    <path
+                        d="M534.6 182.6C547.1 170.1 547.1 149.8 534.6 137.3L470.6 73.3C461.4 64.1 447.7 61.4 435.7 66.4C423.7 71.4 416 83.1 416 96L416 128L256 128C150 128 64 214 64 320C64 337.7 78.3 352 96 352C113.7 352 128 337.7 128 320C128 249.3 185.3 192 256 192L416 192L416 224C416 236.9 423.8 248.6 435.8 253.6C447.8 258.6 461.5 255.8 470.7 246.7L534.7 182.7zM105.4 457.4C92.9 469.9 92.9 490.2 105.4 502.7L169.4 566.7C178.6 575.9 192.3 578.6 204.3 573.6C216.3 568.6 224 556.9 224 544L224 512L384 512C490 512 576 426 576 320C576 302.3 561.7 288 544 288C526.3 288 512 302.3 512 320C512 390.7 454.7 448 384 448L224 448L224 416C224 403.1 216.2 391.4 204.2 386.4C192.2 381.4 178.5 384.2 169.3 393.3L105.3 457.3z" />
+                </svg>
+                Đang học</span>
             {% elif w.status == "reviewing" %}
-                <span class="status reviewing">🔁 Đang ôn</span>
+            <span class="status reviewing">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" style="width: 10px; fill:chocolate">
+                    <path d="M320 64C306.7 64 296 74.7 296 88L296 97.7C214.6 109.3 152 179.4 152 264L152 278.5C152 316.2 142 353.2 123 385.8L101.1 423.2C97.8 429 96 435.5 96 442.2C96 463.1 112.9 480 133.8 480L506.2 480C527.1 480 544 463.1 544 442.2C544 435.5 542.2 428.9 538.9 423.2L517 385.7C498 353.1 488 316.1 488 278.4L488 263.9C488 179.3 425.4 109.2 344 97.6L344 87.9C344 74.6 333.3 63.9 320 63.9zM488.4 432L151.5 432L164.4 409.9C187.7 370 200 324.6 200 278.5L200 264C200 197.7 253.7 144 320 144C386.3 144 440 197.7 440 264L440 278.5C440 324.7 452.3 370 475.5 409.9L488.4 432zM252.1 528C262 556 288.7 576 320 576C351.3 576 378 556 387.9 528L252.1 528z"/>
+                </svg>
+                Đang ôn</span>
             {% elif w.status == "mastered" %}
-                <span class="status mastered">✔ Đã thuộc</span>
+            <span class="status mastered">✔ Đã thuộc</span>
             {% elif w.status == "dropped" %}
-                <span class="status dropped">❌ Đã bỏ</span>
+            <span class="status dropped">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" style="width: 10px; fill:crimson">
+                    <path d="M232.7 69.9C237.1 56.8 249.3 48 263.1 48L377 48C390.8 48 403 56.8 407.4 69.9L416 96L512 96C529.7 96 544 110.3 544 128C544 145.7 529.7 160 512 160L128 160C110.3 160 96 145.7 96 128C96 110.3 110.3 96 128 96L224 96L232.7 69.9zM128 208L512 208L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 208zM216 272C202.7 272 192 282.7 192 296L192 488C192 501.3 202.7 512 216 512C229.3 512 240 501.3 240 488L240 296C240 282.7 229.3 272 216 272zM320 272C306.7 272 296 282.7 296 296L296 488C296 501.3 306.7 512 320 512C333.3 512 344 501.3 344 488L344 296C344 282.7 333.3 272 320 272zM424 272C410.7 272 400 282.7 400 296L400 488C400 501.3 410.7 512 424 512C437.3 512 448 501.3 448 488L448 296C448 282.7 437.3 272 424 272z"/>
+                </svg>
+                Đã bỏ</span>
             {% endif %}
         </div>
 
         <div class="topword-actions">
             {% if w.status == None %}
-                <button class="action-btn" data-action="add">+ Thêm</button>
+            <button class="action-btn add-btn" data-action="add">+ Thêm</button>
             {% else %}
-                <button class="action-btn" disabled>Đã thêm</button>
+            <button class="action-btn" disabled>Đã thêm</button>
             {% endif %}
         </div>
         {% endif %}
 
     </div>
-{% endfor %}
+    {% endfor %}
 </div>
 
 

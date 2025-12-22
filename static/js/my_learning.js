@@ -1,4 +1,11 @@
-const tabCache = {};
+// const tabCache = {};
+const tabCache = {
+    learning: {},
+    reviewing: {},
+    mastered: {},
+    dropped: {}
+};
+
 let currentTab = "learning";
 
 function showToast(msg){
@@ -49,22 +56,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function loadTab(status) {
+
+function renderPagination(status, p) {
+    const box = document.getElementById("pagination");
+    box.innerHTML = "";
+
+    if (p.pages <= 1) return;
+
+    if (p.has_prev) {
+        box.innerHTML += `
+            <a class="btn" onclick="loadTab('${status}', ${p.page - 1})">← Trước</a>
+        `;
+    }
+
+    box.innerHTML += `
+        <span>Trang ${p.page} / ${p.pages}</span>
+    `;
+
+    if (p.has_next) {
+        box.innerHTML += `
+            <a class="btn" onclick="loadTab('${status}', ${p.page + 1})">Sau →</a>
+        `;
+    }
+}
+
+
+function loadTab(status, page = 1) {
     currentTab = status;
-    
-    // ✅ Đã có data → render luôn
-    if (status in tabCache) {        
-        renderTable(status, tabCache[status]);
+
+    // ✅ cache theo page
+    if (tabCache[status] && tabCache[status][page]) {
+        renderTable(status, tabCache[status][page].items);
+        renderPagination(status, tabCache[status][page].pagination);
         return;
     }
 
-    // ❌ Chưa có → gọi API
-    fetch(`/api/my_learning?status=${status}`)
+    fetch(`/api/my_learning?status=${status}&page=${page}`)
         .then(r => r.json())
         .then(res => {
             if (!res.success) return;
-            tabCache[status] = res.data; // cache lại
+
+            tabCache[status][page] = {
+                items: res.data,
+                pagination: res.pagination
+            };
+
             renderTable(status, res.data);
+            renderPagination(status, res.pagination);
         });
 }
 
@@ -109,6 +147,7 @@ function renderTable(status, items) {
         tbody.appendChild(tr);
     });
 }
+
 
 document.querySelectorAll(".tabs label").forEach(label => {
     label.addEventListener("click", () => {
