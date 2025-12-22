@@ -182,14 +182,7 @@ tr:hover {
 .status.dropped { background: #fee2e2; color: #991b1b; }
 .status.none { background: #e5e7eb; color: #374151; }
 
-/* ACTIONS */
-.topword-actions {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 10px;
-}
+
 
 
 /* ===================== */
@@ -219,6 +212,7 @@ tr:hover {
     justify-content: space-between;
     height: 100px;
     cursor: pointer;
+    
 }
 
 /* ========================= */
@@ -266,15 +260,16 @@ tr:hover {
     color: #1e3a8a;
     text-align: center;
     margin-top: 20px;
+    pointer-events: auto
 }
 
 /* ========================= */
 /* Actions - bottom row      */
 /* ========================= */
-
 .topword-actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
+    flex-wrap: wrap;
     justify-content: center;
     margin-top: 10px;
 }
@@ -284,10 +279,9 @@ tr:hover {
 /* Hover polish              */
 /* ========================= */
 
-.topword-card:hover .topword-text {
+.topword-text:hover {
     text-decoration: underline;
     color: #018aa6;
-
 }
 
 /* ========================= */

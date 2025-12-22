@@ -12,12 +12,12 @@
 
 <div class="container topword-container">
 {% for w in words %}
-    <div class="card topword-card"
-         data-href="/word/{{ w.text }}"
-         data-id="{{ w.word_id }}">
+    <div class="card topword-card">
 
         <!-- WORD -->
-        <div class="topword-text">
+        <div class="topword-text"
+         data-href="/word/{{ w.text }}"
+         data-id="{{ w.id }}">
             {{ w.text }}
         </div>
 
@@ -43,15 +43,9 @@
 
         <div class="topword-actions">
             {% if w.status == None %}
-                <button class="action-btn" data-action="add">+ Add</button>
-            {% elif w.status == "learning" %}
-                <button class="action-btn danger" data-action="drop">❌ Bỏ</button>
-                <button class="action-btn" data-action="reviewing">🔁 Ôn</button>
-            {% elif w.status == "reviewing" %}
-                <button class="action-btn danger" data-action="drop">❌ Bỏ</button>
-                <button class="action-btn success" data-action="mastered">✔ Thuộc</button>
-            {% elif w.status in ["mastered", "dropped"] %}
-                <button class="action-btn" data-action="reset">↩ Học lại</button>
+                <button class="action-btn" data-action="add">+ Thêm</button>
+            {% else %}
+                <button class="action-btn" disabled>Đã thêm</button>
             {% endif %}
         </div>
         {% endif %}

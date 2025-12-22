@@ -268,41 +268,6 @@ class Example(db.Model):
 
 
 # ==================================================
-# ASSOCIATION TABLES
-# ==================================================
-# class WordKanji(db.Model):
-#     __tablename__ = "word_kanji"
-
-#     word_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey("words.id"),
-#         primary_key=True
-#     )
-
-#     kanji_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey("kanji.id"),
-#         primary_key=True
-#     )
-
-
-# class WordGrammar(db.Model):
-#     __tablename__ = "word_grammar"
-
-#     word_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey("words.id"),
-#         primary_key=True
-#     )
-
-#     grammar_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey("grammar.id"),
-#         primary_key=True
-#     )
-
-
-# ==================================================
 # ARTICLE WORD OCCURRENCE
 # ==================================================
 class WordOccurrence(db.Model):

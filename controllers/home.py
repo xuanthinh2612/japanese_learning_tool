@@ -16,16 +16,16 @@ def load_logged_in_user():
 
 @app.route("/")
 def index():
-    # run_import(
-    #     kanji_file="data/kanji.json",
-    #     vocab_file="data/vocab.json",
-    #     grammar_file="data/grammar.json")
-
     return render_template("index.html")
 
 
 @app.route("/top-words")
 def top_words():
+    # run_import(
+    # kanji_file="data/kanji.json",
+    # vocab_file="data/vocab.json",
+    # grammar_file="data/grammar.json")
+
     page = request.args.get("page", 1, type=int)
     per_page = 30   # hiển thị rất nhiều từ / page
 
@@ -81,21 +81,6 @@ def my_learning():
         flash("Vui lòng đăng nhập")
         return redirect("/login")
 
-    # items = LearningItem.query.filter_by(user_id=g.user.id).join(Word).all()
-    # items = (
-    #     db.session.query(LearningItem)
-    #     .filter_by(user_id=g.user.id, status=status)
-    #     .all()
-    # )
-
-    # data = [
-    #     {
-    #         "word_id": i.word.id,
-    #         "word": i.word.forms[0].form,
-    #     }
-    #     for i in items
-    # ]
-    
     return render_template("my_learning.html")
 
     

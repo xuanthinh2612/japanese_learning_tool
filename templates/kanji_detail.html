@@ -26,10 +26,12 @@
                 <span class="badge">Âm hán: {{ kanji.hanviet }}</span>
             {% endif %}
             {% if kanji.frequency %}
-                <span class="badge">Thông dụng: {{ kanji.frequency }}</span>
+                <span class="badge">Xếp hạng thông dụng: {{ kanji.frequency }}</span>
             {% endif %}
             {% if kanji.level %}
-                <span class="badge">Level: {{kanji.level}}</span>
+                <span class="badge">JLPT: {{kanji.level}}</span>
+            {% else %}
+                <span class="badge">JLPT: N1+</span>
             {% endif %}
         </div>
     </div>

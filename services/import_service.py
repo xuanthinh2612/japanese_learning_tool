@@ -1,6 +1,7 @@
 import json
 from app import db
-from models import Kanji, Word, Grammar, Example, WordExample, WordForm, WordGloss, WordReading, WordSense, Article
+from models import Kanji, Word, Grammar, Example, WordExample, WordForm, WordGloss, WordReading, WordSense, Article, GrammarUsage
+from sqlalchemy import case, and_, or_
 
 # ===========================
 # HELPER FUNCTIONS
@@ -262,12 +263,12 @@ def import_grammar(file_path):
 def run_import(kanji_file, vocab_file, grammar_file):
     print("Starting import...")
     # import_kanji(kanji_file)
-    # import_vocab(vocab_file)
+    import_vocab(vocab_file)
     # import_grammar(grammar_file)
     # articles = Article.query.all()
     # for a in articles:
     #     db.session.delete(a)
-
+    # update_kanji_level()
     # words = Word.query.all()
     # for a in words:
     #     db.session.delete(a)
@@ -276,13 +277,42 @@ def run_import(kanji_file, vocab_file, grammar_file):
     print("All data imported successfully!")
 
 
-if __name__ == "__main__":
-    from app import app
+def update_kanji_level():
+    n5_list = Kanji.query.filter(
+        and_ (Kanji.frequency <= 300)
+        )
+    n4_list = Kanji.query.filter(
+        and_ (Kanji.frequency > 300, Kanji.frequency <= 500)
+        )
+    n3_list = Kanji.query.filter(
+        and_ (Kanji.frequency > 500, Kanji.frequency <= 800)
+        )
+    n2_list = Kanji.query.filter(
+        and_ (Kanji.frequency > 800, Kanji.frequency <= 1250)
+        )
+    n1_list = Kanji.query.filter(
+        and_ (Kanji.frequency > 1250, Kanji.frequency <= 2501)
+        )
 
-    with app.app_context():
-        # run_import(
-        #     kanji_file="data/kanji.json",
-        #     vocab_file="data/vocab.json",
-        #     grammar_file="data/grammar.json")
-        db.session.query(Article).delete()
-        db.session.commit()
+    for k in n5_list:
+        k.level = "N5"
+        db.session.add(k)
+    
+    for k in n4_list:
+        k.level = "N4"
+        db.session.add(k)
+    
+    for k in n3_list:
+        k.level = "N3"
+        db.session.add(k)
+    
+    for k in n2_list:
+        k.level = "N2"
+        db.session.add(k)
+    
+    for k in n1_list:
+        k.level = "N1"
+        db.session.add(k)    
+
+    db.session.commit()
+    print("Update kanji level completed!")
