@@ -25,6 +25,12 @@
             {% if kanji.strokes %}
                 <span class="badge">Âm hán: {{ kanji.hanviet }}</span>
             {% endif %}
+            {% if kanji.frequency %}
+                <span class="badge">Thông dụng: {{ kanji.frequency }}</span>
+            {% endif %}
+            {% if kanji.level %}
+                <span class="badge">Level: {{kanji.level}}</span>
+            {% endif %}
         </div>
     </div>
 
@@ -51,9 +57,9 @@
     <div class="kanji-example-card">
         <h3>📖 Ví dụ</h3>
         <ul>
-            {% for ex in kanji.examples.split(',') %}
+            {% for ex in kanji.examples.split(' ') %}
                 {% if ex %}
-                    <li>{{ ex }}</li>
+                    <li><span class="word important-word" data-word="{{ ex }}">{{ ex }}</span></li>
                 {% endif %}
             {% endfor %}
         </ul>

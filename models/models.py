@@ -199,6 +199,7 @@ class Kanji(db.Model):
     # Meanings
     meaning_en = db.Column(db.Text)
     meaning_vi = db.Column(db.Text)
+    level = db.Column(db.Text)
 
     # Metadata
     strokes = db.Column(db.Integer)

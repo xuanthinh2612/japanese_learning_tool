@@ -1,0 +1,200 @@
+{% extends "layout.html" %}
+{% block title %}{{ word.forms[0].form }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/grammar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/word.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="grammar-detail-wrapper">
+
+    <!-- ===================== -->
+    <!-- HEADER (REUSE GRAMMAR) -->
+    <!-- ===================== -->
+    <div class="grammar-header">
+        <div class="main-word">
+            {{ word.forms | map(attribute='form') | join('・') }}
+        </div>
+
+        {% if word.level %}
+        <div class="grammar-level-badge">
+            {{ word.level }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ===================== -->
+    <!-- READING -->
+    <!-- ===================== -->
+    {% if word.readings %}
+    <div class="grammar-section">
+        <h3>🔤 Cách đọc</h3>
+        <p>
+            {{ word.readings | map(attribute='reading') | join('・') }}
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- ===================== -->
+    <!-- MEANINGS / SENSES -->
+    <!-- ===================== -->
+    {% for sense in word.senses %}
+    <div class="grammar-section">
+
+        <h3>📖 Nghĩa{% if sense.pos %} ({{ sense.pos }}){% endif %}</h3>
+
+        {% for g in sense.glosses %}
+            {% if g.means_vi %}
+                <span><i>{{ g.means_vi }}</i>,&nbsp;</span>
+            {% endif %}
+        {% endfor %}
+
+        {% if sense.examples %}
+        <div class="grammar-section">
+            <h3>✏ Ví dụ</h3>
+            <ul class="grammar-examples">
+                {% for ex in sense.examples %}
+                <li>
+                    <b>{{ ex.sentence }}</b>
+                    {% if ex.translation_vi %}
+                        <p>{{ ex.translation_vi }}</p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+    </div>
+    {% endfor %}
+
+    <!-- ===================== -->
+    <!-- ARTICLE CONTEXT -->
+    <!-- ===================== -->
+    {% if articles %}
+    <div class="grammar-section">
+        <h3>📰 Sử dụng trong thực tế</h3>
+
+        <ul class="grammar-examples">
+            {% for title, source, content, count in articles %}
+            <li>
+                <b>{{ title }}</b>
+                <p>{{ source }} · {{ count }} times</p>
+                <div>{{ content | safe }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- ===================== -->
+    <!-- ACTIONS -->
+    <!-- ===================== -->
+    <div class="btn-actions">
+        <button class="btn primary">⭐ Thêm vào danh sách học</button>
+        <a href="/" class="btn ghost">← Quay lại</a>
+    </div>
+
+</div>
+
+<!-- ===================== -->
+<!-- SCRIPT (SAFE) -->
+<!-- ===================== -->
+
+<div id="word-popup" style="display:none; position:absolute; background:white; border:1px solid #ccc; padding:10px;"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const keyword = "{{ word }}";
+        if (!keyword) return;
+
+        const regex = new RegExp(`(${keyword})`, "gi");
+
+        document.querySelectorAll(".important-word").forEach(el => {
+            if (el.innerHTML.trim() == keyword) {
+                el.classList.add('highlight-word');
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("click", async (e) => {
+        const popup = document.getElementById("word-popup");
+
+        // click vào word
+        if (e.target.classList.contains("word")) {
+            e.stopPropagation();
+
+            const keyword = e.target.dataset.word;
+
+            try {
+                const res = await fetch(`/api/word/${encodeURIComponent(keyword)}`);
+                if (!res.ok) return;
+
+                const data = await res.json();
+
+                // ===== render popup =====
+                let html = "";
+
+                // Title (kanji)
+                html += `<div class="word-popup-title">${data.forms.join("・")}</div>`;
+
+                // Reading
+                if (data.readings.length) {
+                    html += `<div class="word-popup-reading">${data.readings.join("・")}</div>`;
+                }
+
+                // Senses
+                let before_pos = "";
+
+                data.senses.forEach((s, idx) => {
+                    html += `<div class="word-popup-sense">`;
+                    
+                    if (s.pos && s.pos != before_pos) {
+                        html += `<div class="word-popup-pos">${s.pos}</div>`;
+                        before_pos = s.pos;
+                    }
+
+                    if (s.meanings.vi?.length) {
+                        html += `<div class="word-popup-mean vi">${s.meanings.vi.join("; ")}</div>`;
+                    }
+
+                    html += `</div>`;
+                });
+
+                popup.innerHTML = html;
+                popup.style.left = e.pageX + 10 + "px";
+                popup.style.top = e.pageY + 10 + "px";
+                popup.style.display = "block";
+
+            } catch (err) {
+                console.error(err);
+            }
+
+            return;
+        }
+
+        // click ngoài → ẩn popup
+        popup.style.display = "none";
+    });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("span").forEach(span => {
+        const text = span.textContent
+            .replace(/\u3000/g, " ")  // đổi space Nhật
+            .trim();
+
+        // nếu sau khi trim mà rỗng => không có text thật
+        if (text === "") {
+            span.replaceWith(document.createElement("br"));
+        }
+    });
+});
+</script>
+
+
+{% endblock %}

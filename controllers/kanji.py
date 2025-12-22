@@ -3,6 +3,7 @@ from app import app, db
 from models import Article, Word, WordOccurrence, User, LearningItem, Kanji
 from controllers.helper import extract_words
 from flask import g, session, jsonify
+from sqlalchemy import case
 
 
 @app.before_request
@@ -16,7 +17,10 @@ def get_all_kanji():
     page = request.args.get("page", 1, type=int)
     per_page = 60   # 60 kanji / page (hợp lý cho grid)
 
-    pagination = Kanji.query.order_by(Kanji.id).paginate(
+    pagination = Kanji.query.order_by(
+        case((Kanji.frequency == None, 1), else_=0),
+        Kanji.frequency.asc()
+        ).paginate(
         page=page,
         per_page=per_page,
         error_out=False

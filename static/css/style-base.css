@@ -3,9 +3,12 @@
 /* ===================== */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
     margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #e0f7fa, #ffffff);
+    color: #333;
+    overflow-x: hidden;
+
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -32,19 +35,30 @@ body {
     justify-content: space-between;
     align-items: center;
     background: linear-gradient(90deg, #3498db, #2ecc71);
-    padding: 10px 20px;
+    padding: 5px 20px;
     z-index: 1000;
     border-radius: 0 0 10px 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     flex-wrap: wrap;
 }
 
-.navbar .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
+
+/* Logo bên trái */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.5rem;
 }
+
+.logo img {
+    height: 70px;
+    width: auto;
+}
+
 
 .navbar .search-bar {
     width: 25%; /* chiếm 1/4 navbar */
@@ -170,7 +184,7 @@ footer a:hover {
     opacity: 0.85;
 }
 
-/* Button Actions */
+/* Button */
 .btn-actions {
     display: flex;
     justify-content: center;
@@ -209,6 +223,37 @@ footer a:hover {
     transform: translateY(-5px);
 }
 
+/* Action button */
+.action-btn {
+    pointer-events: auto;
+    padding: 8px 15px;
+    font-size: 0.75rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.action-btn.primary {
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+
+.action-btn.primary:hover {
+    transform: translateY(-2px);
+}
+
+.action-btn.ghost {
+    background: #ff9c31;
+    color: #ffffff;
+    text-decoration: none;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+.action-btn.ghost:hover {
+    transform: translateY(-2px);
+}
 
 /* ===================== */
 /* Pagination            */

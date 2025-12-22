@@ -20,18 +20,21 @@
 <!-- Navbar                -->
 <!-- ===================== -->
 <div class="navbar">
-    <a href="/" class="logo">WordApp</a>
+    <a href="/" class="logo">
+        <img src="{{ url_for('static', filename='image/logo-rm.png') }}" alt="Tôi học tiếng Nhật">
+        <span>Tôi học tiếng Nhật.com</span>
+    </a>
 
     <div class="search-bar">
-        <input type="text" placeholder="Search words...">
+        <input id="search-bar" type="text" placeholder="Tra từ...">
     </div>
 
     <div class="user-actions">
     {% if g.user %}
-        <span class="username">👤 {{ g.user.username }}</span>
-        <a href="/logout">🚪 Logout</a>
+        <span class="username">👤&nbsp;&nbsp;{{ g.user.username }}</span>
+        <a href="/logout">🚪 Đăng Xuất</a>
     {% else %}
-        <a href="/login">🔑 Login</a>
+        <a href="/login">🔑 Đăng nhập</a>
     {% endif %}
     </div>
 </div>

@@ -1,0 +1,302 @@
+/* ===================== */
+/* Word List             */
+/* ===================== */
+#word-list {
+    list-style: none;
+    padding: 0;
+    max-width: 700px;
+    margin: 0 auto 50px;
+}
+
+#word-list li {
+    background-color: #fff;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#word-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+#word-list li a {
+    color: #2c3e50;
+    font-weight: bold;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+#word-list li a:hover {
+    text-decoration: underline;
+}
+
+/* Status Styles */
+.status {
+    margin-left: 10px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+
+/* ===================== */
+/* Tabs Styles           */
+/* ===================== */
+input[type=radio] { display: none; }
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.tabs label {
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    background: #e0e0e0;
+    color: #34495e;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.tabs label:hover {
+    background: #d0d0d0;
+}
+
+/* Active Tab */
+.tabs .active-tab {
+    background: #3498db;
+    color: #fff;
+}
+
+/* ===================== */
+/* Panel Styles          */
+/* ===================== */
+.content .panel {
+    display: block !important;
+    margin-top: 15px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+th {
+    background: #ecf0f1;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+tr:nth-child(even) { background-color: #f9f9f9; }
+
+tr:hover {
+    background: #f1f1f1;
+}
+
+/* ===================== */
+/* Toast Notifications   */
+/* ===================== */
+#toast-container {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    z-index: 9999;
+}
+
+#toast-container div {
+    background: #34495e;
+    color: #fff;
+    padding: 10px 18px;
+    margin-top: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    font-weight: 500;
+    min-width: 200px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.3s, transform 0.3s;
+    text-align: center;
+}
+
+/* ========Top words============= */
+/* ===================== */
+/* Top Word Grid         */
+/* ===================== */
+
+.topword-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 18px;
+    max-width: 1600px;
+    margin: 50px auto 80px;
+    padding: 0 20px;
+}
+
+
+/* FREQ */
+.topword-freq {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* STATUS */
+.topword-status {
+    margin-top: 3px;
+}
+
+.status {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+}
+
+.status.learning { background: #dbeafe; color: #1e40af; }
+.status.reviewing { background: #fef3c7; color: #92400e; }
+.status.mastered { background: #dcfce7; color: #166534; }
+.status.dropped { background: #fee2e2; color: #991b1b; }
+.status.none { background: #e5e7eb; color: #374151; }
+
+/* ACTIONS */
+.topword-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+
+/* ===================== */
+/* Responsive            */
+/* ===================== */
+
+@media (max-width: 1400px) {
+    .topword-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .topword-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+/* ========================= */
+/* Card layout               */
+/* ========================= */
+
+.topword-card {
+    position: relative;
+    padding: 14px 14px 16px;
+    justify-content: space-between;
+    height: 100px;
+    cursor: pointer;
+}
+
+/* ========================= */
+/* Status - top left         */
+/* ========================= */
+.topword-status {
+    position: absolute;
+    top: 0px;
+    left: 14px;
+    line-height: 1;
+}
+
+/* status chỉ là text */
+.topword-status .status {
+    background: none;
+    padding: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* màu chữ theo trạng thái – nhẹ */
+.status.learning  { color: #2563eb; }
+.status.reviewing { color: #0f766e; }
+.status.mastered  { color: #15803d; }
+.status.dropped   { color: #9f1239; }
+.status.none      { color: #6b7280; }
+
+.topword-freq {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    line-height: 1;
+}
+
+/* ========================= */
+/* Word - center             */
+/* ========================= */
+
+.topword-text {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #1e3a8a;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* ========================= */
+/* Actions - bottom row      */
+/* ========================= */
+
+.topword-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+
+/* ========================= */
+/* Hover polish              */
+/* ========================= */
+
+.topword-card:hover .topword-text {
+    text-decoration: underline;
+    color: #018aa6;
+
+}
+
+/* ========================= */
+/* Status colors (giữ lại)   */
+/* ========================= */
+
+.status {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+}

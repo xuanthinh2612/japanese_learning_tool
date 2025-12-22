@@ -1,8 +1,9 @@
 from flask import render_template, request, redirect
 from app import app, db
-from models import Article, Word, WordOccurrence, User, LearningItem, WordForm, WordReading
+from models import Article, Word, WordOccurrence, User, LearningItem, WordForm, WordReading, WordSense
 from controllers.helper import extract_words
 from flask import g, session, jsonify, flash
+from sqlalchemy.orm import joinedload
 
 
 @app.before_request
@@ -34,18 +35,10 @@ def add_to_learning(word_id):
 
     return {"message": "Đã thêm vào danh sách học", "success": True, "item_id": item.id}
 
-@app.route("/my_learning")
-def my_learning():
-    if g.user is None:
-        flash("Vui lòng đăng nhập")
-        return redirect("/login")
-
-    items = LearningItem.query.filter_by(user_id=g.user.id).join(Word).all()
-    return render_template("my_learning.html", items=items)
-
 
 @app.route("/update_learning_status/<int:word_id>", methods=["POST"])
 def update_learning_status(word_id):
+    message = {"learning": "Đang học", "reviewing": "Đang học", "mastered": "Đã thuộc", "dropped": "Đã bỏ"}
     if g.user is None:
         return {"message": "Vui lòng đăng nhập", "success": False}, 401
 
@@ -53,29 +46,50 @@ def update_learning_status(word_id):
         user_id=g.user.id,
         word_id=word_id
     ).first()
-
+        
     if not item:
         return {"message": "Từ chưa có trong danh sách học", "success": False}
 
     data = request.get_json()
     new_status = data.get("status")
 
+    print(new_status)
+    
     allowed = ["learning", "reviewing", "mastered", "dropped"]
     if new_status not in allowed:
         return {"message": "Trạng thái không hợp lệ", "success": False}
 
+
+    print(new_status)
     item.status = new_status
     db.session.commit()
 
     return {
-        "message": f"Đã chuyển trạng thái → {new_status}",
+        "message": f"Đã thêm vào → {message.get(new_status)}",
         "success": True
     }
 
 
 @app.route("/word/<word>")
 def word_detail(word):
-    data = (
+    # 1. Lấy word chính
+    word_obj = (
+        Word.query
+        .join(WordForm)
+        .filter(WordForm.form == word)
+        .options(
+            joinedload(Word.forms),
+            joinedload(Word.readings),
+            joinedload(Word.senses)
+                .joinedload(WordSense.glosses),
+            joinedload(Word.senses)
+                .joinedload(WordSense.examples),
+        )
+        .first_or_404()
+    )
+
+    # 2. Lấy article context
+    articles = (
         db.session.query(
             Article.title,
             Article.source,
@@ -83,13 +97,16 @@ def word_detail(word):
             WordOccurrence.count
         )
         .join(WordOccurrence)
-        .join(Word)
-        .join(WordForm)
-        .filter(WordForm.form == word)
+        .filter(WordOccurrence.word_id == word_obj.id)
+        .limit(1)
         .all()
     )
-    print(data)
-    return render_template("word.html", word=word, articles=data, current_source="daily")
+
+    return render_template(
+        "word_detail.html",
+        word=word_obj,
+        articles=articles
+    )
 
 
 # API Search 
@@ -145,3 +162,31 @@ def get_word(keyword):
         "readings": readings,
         "senses": senses
     })
+
+
+@app.route("/api/my_learning")
+def api_my_learning():
+    status = request.args.get("status", "learning")
+    if g.user is None:
+        return jsonify(
+            {
+                "status": "error",
+                "message": "Bạn chưa login"
+             }
+        )
+    
+    items = LearningItem.query.filter_by(user_id=g.user.id, status=status).join(Word).all()
+
+    print()
+    
+    return jsonify({
+        "success": True,
+        "data": 
+        [
+        {
+            "word_id": i.word.id,
+            "status": i.status,
+            "word": i.word.forms[0].form,
+        }
+        for i in items
+    ]})

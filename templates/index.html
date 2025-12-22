@@ -8,17 +8,18 @@
     
 {% block content %}
 
-    <h1>Welcome to WordApp</h1>
+    <h1>Trang chủ</h1>
 
     <div class="container">
         <a href="/top-words" class="card"><span class="icon">📚</span>Top từ thông dụng</a>
         <a href="/my_learning" class="card"><span class="icon">📝</span>Từ của tôi</a>
-        <a href="/kanji" class="card"><span class="icon">🎯</span>Kanji</a>
-        <a href="/grammar" class="card"><span class="icon">💡</span>Grammar</a>
+        <a href="/kanji" class="card"><span class="icon">🎯</span>Hán tự</a>
+        <a href="/grammar" class="card"><span class="icon">💡</span>Ngữ pháp</a>
+        <a href="/articles" class="card"><span class="icon">📊</span>Luyện đọc blog/báo</a>
+        <a href="/articles" class="card"><span class="icon">📊</span>Cộng đồng</a>
         <!-- Addmin add article -->
         {% if g.user and g.user.role == 'admin' %}
             <a href="/add-article" class="card"><span class="icon">➕</span>Add Article</a>
         {% endif %}
-        <a href="/page6" class="card"><span class="icon">📊</span>Stats</a>
     </div>
 {% endblock %}
