@@ -2,18 +2,6 @@
 /* General Styles        */
 /* ===================== */
 
-/* ===================== */
-/* Card Container        */
-/* ===================== */
-.container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
-    justify-content: center;
-    align-items: center;
-    max-width: 1200px;
-    margin: 60px auto 100px;
-}
 
 /* ===================== */
 /* Header                */

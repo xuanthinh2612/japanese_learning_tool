@@ -143,18 +143,6 @@ tr:hover {
 }
 
 /* ========Top words============= */
-/* ===================== */
-/* Top Word Grid         */
-/* ===================== */
-
-.topword-container {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 18px;
-    max-width: 1600px;
-    margin: 50px auto 80px;
-    padding: 0 20px;
-}
 
 
 /* FREQ */
@@ -185,21 +173,6 @@ tr:hover {
 
 
 
-/* ===================== */
-/* Responsive            */
-/* ===================== */
-
-@media (max-width: 1400px) {
-    .topword-container {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
-
-@media (max-width: 900px) {
-    .topword-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
 
 
 /* ========================= */
