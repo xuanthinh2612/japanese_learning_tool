@@ -123,7 +123,7 @@ h1 {
 
 .kanji-detail-wrapper {
     max-width: 900px;
-    margin: 100px auto 120px;
+    margin: 15px auto 120px;
     padding: 0 20px;
     display: flex;
     flex-direction: column;

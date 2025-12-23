@@ -39,5 +39,6 @@ def kanji_detail(kanji_id):
 
     return render_template(
         "kanji_detail.html",
-        kanji=kanji
+        kanji=kanji,
+        none_display_flg=True,
     )

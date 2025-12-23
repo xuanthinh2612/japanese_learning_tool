@@ -55,3 +55,14 @@ def add_article():
         return redirect("/")
 
     return render_template("add_article.html")
+
+@app.route("/articles", methods=["GET"])
+def get_article_list():
+    article_list = Article.query.all()
+    return render_template("article_list.html", article_list=article_list)
+
+
+@app.route("/article/<int:article_id>", methods=["GET"])
+def get_article(article_id):
+    article= Article.query.fiter_by(id=article_id).all()
+    return render_template("article_detail.html", article=article)

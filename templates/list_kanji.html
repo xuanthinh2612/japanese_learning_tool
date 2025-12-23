@@ -8,9 +8,7 @@
 {% endblock %}
 
 {% block content %}
-
-<h1>📘 Kanji</h1>
-
+    
 <div class="container kanji-container">
     {% for kanji in Kanji_list %}
         <a href="/kanji/{{ kanji.id }}" class="card kanji-card">

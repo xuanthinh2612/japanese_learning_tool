@@ -33,4 +33,6 @@ def grammar_list():
 @app.route("/grammar/<int:grammar_id>")
 def grammar_detail(grammar_id):
     grammar = Grammar.query.get_or_404(grammar_id)
-    return render_template("grammar_detail.html", grammar=grammar)
+    return render_template("grammar_detail.html", 
+                           grammar=grammar,
+                           none_display_flg=True)

@@ -6,8 +6,6 @@
 {% endblock %}
 
 {% block content %}
-<h1>📘 Ngữ pháp</h1>
-
 <div class="container grammar-container">
     {% for g in grammar_list %}
     <a href="{{ url_for('grammar_detail', grammar_id=g.id) }}" class="card grammar-card">
