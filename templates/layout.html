@@ -22,34 +22,73 @@
         }
 
         .sidebar {
-            width: 200px;
-            /* background: linear-gradient(180deg, #3498db, #2ecc71); */
-            background: linear-gradient(360deg, #a5e3eb, #edfbff);
-            padding: 20px;
-            color: #138222;
-            /* height: calc(100vh); */
-            /* trừ navbar */
-            overflow-y: auto;
-            /* ✅ CUỘN RIÊNG */
-            position: sticky;
-            /* dính khi cuộn */
-            /* Ẩn scrollbar */
-            scrollbar-width: none;
-            /* Firefox */
-            -ms-overflow-style: none;
-            /* IE / Edge cũ */
+            z-index: 1000;
+            position: fixed;
+            top: 50px; /* navbar */
+            left: 0;
 
-            top: 0px;
-            /* height: calc(100vh); */
-            margin: 0px 0px;
-            /* border-radius: 10px; */
+            width: 230px;
+            height: calc(100vh - 50px);
+            padding: 0px 20px;
+
+            background: #d7edef;
+            color: #106b1c;
+
+            overflow-y: auto;
+            overflow-x: hidden;
+            
+            /* Scroll bar */
+            scrollbar-width: thin; /* Firefox */
+            scrollbar-color: rgba(0, 0, 0, 0.137) transparent; /* màu thanh và background */
+
+            transform: translateX(-100%); /* ẩn bên trái */
             transition: transform 0.3s ease;
         }
 
-        .sidebar::-webkit-scrollbar {
-            display: none;
-            /* Chrome, Safari */
+        /* Scroll mảnh, mờ cho Chrome/Safari/Edge */
+        ::-webkit-scrollbar { width:6px; height:6px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.25); border-radius:3px; }
+        ::-webkit-scrollbar-thumb:hover { background:rgba(0,0,0,0.5); }
+
+        /* Firefox */
+        * { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.25) transparent; }
+        /* Chrome/Safari/Edge */
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.25);
+            border-radius: 3px;
+
+            /* Thu ngắn chiều dài thanh scroll */
+            min-height: 30px;      /* thanh ngắn nhất */
+            margin-top: 5px;       /* cách đầu */
+            margin-bottom: 5px;    /* cách cuối */
         }
+
+        .navbar::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.25);
+            border-radius: 3px;
+            min-width: 30px;       /* thanh ngang ngắn */
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        /* Khu vực scrollable */
+        .sidebar, .navbar, .main-content { overflow-y:auto; overflow-x:hidden; }
+        
+        /* Khi JS load xong → hiện ra */
+        .sidebar.loaded {
+            transform: translateX(0); /* slide vào */
+        }
+
+        /* Toggle đóng → chỉ cần collapsed */
+        .sidebar.collapsed {
+            transform: translateX(-100%); /* slide ra */
+        }
+
+
+        /* .sidebar.hidden {
+            transform: translateX(-100%);
+        } */
 
         .sidebar h3 {
             margin-bottom: 15px;
@@ -76,6 +115,13 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
+        .sidebar ul li a.active {
+            background: rgba(255, 224, 165, 0.781);
+            font-weight: 600;
+        }
+
+        
+
         .overlay {
             display: none;
             position: fixed;
@@ -89,41 +135,17 @@
 
         .main-content {
             flex: 1;
+            transition: all 0.3s ease;
+            min-width: 0;
+            /* CỰC KỲ QUAN TRỌNG */
             /* padding: 25px; */
-        }
-
-        @media (max-width: 900px) {
-            .menu-toggle {
-                display: block;
-            }
-
-            .layout {
-                margin-top: 90px;
-            }
-
-            .sidebar {
-                position: fixed;
-                top: 90px;
-                left: 0;
-                height: calc(100vh - 90px);
-                transform: translateX(-100%);
-                z-index: 1000;
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .overlay.active {
-                display: block;
-            }
         }
 
         .search-div {
             display: block;
             width: 30%;
         }
-        
+
         .search-box {
             display: flex;
             gap: 10px;
@@ -139,6 +161,7 @@
             border: 1px solid #ccc;
             font-size: 1rem;
             outline: none;
+            text-decoration: none;
         }
 
         .search-box input:focus {
@@ -159,32 +182,19 @@
             opacity: 0.9;
         }
 
-        @media (max-width: 900px) {
-            .sidebar {
-                display: none;
-            }
-
-            .layout {
-                flex-direction: column;
-            }
-
-            /* .main-content {
-        padding: 15px;
-    } */
-        }
-
         .menu-toggle {
             /* display: none; */
             /* position: fixed; */
             top: 80px;
             left: 15px;
             z-index: 1100;
-            /* font-size: 1.8rem; */
-            background: linear-gradient(90deg, #3498db, #2ecc71);
+            font-size: 1.8rem;
+            /* background: linear-gradient(90deg, #3498db, #2ecc71); */
+            background: transparent;
             color: #fff;
             border: none;
             border-radius: 10px;
-            padding: 6px 12px;
+            /* padding: 6px 12px; */
             cursor: pointer;
         }
     </style>
@@ -197,41 +207,74 @@
         <!-- ===================== -->
 
         <aside class="sidebar" id="sidebar">
-            <h3><button class="menu-toggle" id="menuToggle">☰</button> Menu</h3>
+            <h3> Menu</h3>
             <ul>
-                <li><a href="/">📖 Tra từ</a></li>
-                <li><a href="/words">📚 Từ vựng thông dụng</a></li>
-                <li><a href="/kanji">🈶 Kanji</a></li>
-                <li><a href="/grammar">✍️ Ngữ pháp</a></li>
+                <li>
+                    <a class="{% if request.path == '/' %}active{% endif %}" href="/">
+                        🏠 Trang chủ
+                    </a>
+                </li>
+                <li>
+                    <a class="{% if request.path.startswith('/top-words') %}active{% endif %}" href="/top-words">📚 Từ
+                        vựng thông dụng
+                    </a>
+                </li>
+                <li>
+                    <a class="{% if request.path.startswith('/kanji') %}active{% endif %}" href="/kanji">🈶 Kanji
+                    </a>
+                </li>
+                <li>
+                    <a class="{% if request.path.startswith('/grammar') %}active{% endif %}" href="/grammar">✍️ Ngữ pháp
+                    </a>
+                </li>
             </ul>
             <hr>
             <ul>
-                <li><a href="/">📖 Tra từ</a></li>
-                <li><a href="/words">📚 Từ vựng thông dụng</a></li>
-                <li><a href="/kanji">🈶 Kanji</a></li>
-                <li><a href="/grammar">✍️ Ngữ pháp</a></li>
+                <li><a href="/">📖 Game học từ</a></li>
+                <li><a href="/top-words">📚 Bảng xếp hạng</a></li>
+                <li><a href="/articles">🈶 Bài viết</a></li>
+                <li><a href="/articles">🈶 Cộng đồng</a></li>
+                <li><a href="/">📖 Game học từ</a></li>
+                <li><a href="/top-words">📚 Bảng xếp hạng</a></li>
+                <li><a href="/articles">🈶 Bài viết</a></li>
+                <li><a href="/articles">🈶 Cộng đồng</a></li>
+                <li><a href="/">📖 Game học từ</a></li>
+                <li><a href="/top-words">📚 Bảng xếp hạng</a></li>
+                <li><a href="/articles">🈶 Bài viết</a></li>
+                <li><a href="/articles">🈶 Cộng đồng</a></li>
+                <li><a href="/">📖 Game học từ</a></li>
+                <li><a href="/top-words">📚 Bảng xếp hạng</a></li>
+                <li><a href="/articles">🈶 Bài viết</a></li>
+                <li><a href="/articles">🈶 Cộng đồng</a></li>
+                <li><a href="/">📖 Game học từ</a></li>
+                <li><a href="/top-words">📚 Bảng xếp hạng</a></li>
+                <li><a href="/articles">🈶 Bài viết</a></li>
+                <li><a href="/articles">🈶 Cộng đồng</a></li>
+                <li><a href="/">📖 Game học từ</a></li>
+                <li><a href="/top-words">📚 Bảng xếp hạng</a></li>
+                <li><a href="/articles">🈶 Bài viết</a></li>
+                <li><a href="/articles">🈶 Cộng đồng</a></li>
             </ul>
             <hr>
+            {% if g.user and g.user.role == 'admin' %}
             <ul>
-                <li><a href="/">📖 Tra từ</a></li>
-                <li><a href="/words">📚 Từ vựng thông dụng</a></li>
-                <li><a href="/kanji">🈶 Kanji</a></li>
-                <li><a href="/grammar">✍️ Ngữ pháp</a></li>
-                <li><a href="/">📖 Tra từ</a></li>
-                <li><a href="/words">📚 Từ vựng thông dụng</a></li>
-                <li><a href="/kanji">🈶 Kanji</a></li>
-                <li><a href="/grammar">✍️ Ngữ pháp</a></li>
+                <li>
+                    <a href="/add-article"><span class="icon">➕</span>Add Article</a>
+                </li>
             </ul>
+            {% endif %}
+
         </aside>
 
         <!-- ===================== -->
         <!-- Navbar                -->
         <!-- ===================== -->
         <div class="navbar">
-            <a href="/" class="logo">
+            <div class="logo">
+                <button class="menu-toggle" id="menuToggle">☰</button>
                 <!-- <img src="{{ url_for('static', filename='image/logo-rm.png') }}" alt="Tôi học tiếng Nhật"> -->
-                <span>toihoctiengnhat.com</span>
-            </a>
+                <a href="/">toihoctiengnhat.com</span></a>
+            </div>
             <div class="search-div">
                 <div class="search-box">
                     <input type="text" placeholder="🔍 Tìm từ, kanji, nghĩa...">
@@ -248,12 +291,15 @@
                 {% endif %}
             </div>
         </div>
+        <script src="{{ url_for('static', filename='js/common.js')}}"></script>
 
         <!-- Nội dung riêng từng trang -->
         <!-- Main content -->
         <main class="main-content">
             <!-- Search box riêng -->
             {% block content %}{% endblock %}
+            
+            <div id="word-popup" style="display:none; position:absolute; background:white; border:1px solid #ccc; padding:10px;"></div>
 
             <!-- Footer chung -->
             <div>
@@ -268,21 +314,6 @@
 
     </div>
 
-    <script>
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.add('active');
-            overlay.classList.add('active');
-        });
-
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-    </script>
 </body>
 
 </html>

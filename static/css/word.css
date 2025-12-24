@@ -146,3 +146,11 @@ body {
 .word-table tr:hover {
     background: #fafafa;
 }
+
+/* highlight word */
+.highlight-word {
+    background: #b1f9ed;
+    color: #0f1f9a;
+    border-radius: 3px;
+    padding: 5px;
+}

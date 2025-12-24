@@ -105,7 +105,8 @@ def word_detail(word):
     return render_template(
         "word_detail.html",
         word=word_obj,
-        articles=articles
+        articles=articles,
+        word_text=word
     )
 
 

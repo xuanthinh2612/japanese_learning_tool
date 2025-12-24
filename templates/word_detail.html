@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}{{ word.forms[0].form }}{% endblock %}
+{% block title %}{{ word_text }}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/grammar.css') }}">
@@ -103,17 +103,17 @@
 <!-- SCRIPT (SAFE) -->
 <!-- ===================== -->
 
-<div id="word-popup" style="display:none; position:absolute; background:white; border:1px solid #ccc; padding:10px;"></div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const keyword = "{{ word }}";
+        const keyword = "{{ word_text }}";
         if (!keyword) return;
 
         const regex = new RegExp(`(${keyword})`, "gi");
 
         document.querySelectorAll(".important-word").forEach(el => {
-            if (el.innerHTML.trim() == keyword) {
+            if (el.dataset.word.trim() == keyword) {
+                console.log(keyword)
                 el.classList.add('highlight-word');
             }
         });
