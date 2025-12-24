@@ -1,19 +1,20 @@
 // const tabCache = {};
-const tabCache = {
-    learning: {},
-    reviewing: {},
-    mastered: {},
-    dropped: {}
-};
+// const tabCache = {
+//     learning: {},
+//     reviewing: {},
+//     mastered: {},
+//     dropped: {}
+// };
 
 let currentTab = "learning";
+let currentPage = 1;
 
 function showToast(msg){
     const box = document.getElementById("toast-container");
     const t = document.createElement("div");
     t.innerText = msg;
     t.style.cssText = `
-        background: linear-gradient(90deg, #3498db, #2ecc71);
+        background: linear-gradient(90deg, #3498dbb7, #2ecc7097);
         color: #fff;
         padding: 12px 20px;
         margin-top: 10px;
@@ -31,6 +32,19 @@ function showToast(msg){
     setTimeout(()=>{ t.style.opacity = 0; t.style.transform = 'translateY(20px)'; setTimeout(()=>t.remove(), 300); }, 2500);
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    loadTab("learning");
+
+    document.querySelectorAll(".tabs label").forEach(label => {
+        label.addEventListener("click", () => {
+            setActiveTab(label);
+            const status = label.dataset.status;
+            loadTab(status);
+        });
+    });
+});
+
+
 function setActiveTab(activeLabel) {
     const labels = document.querySelectorAll(".tabs label");
 
@@ -44,18 +58,22 @@ function setActiveTab(activeLabel) {
 }
 
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadTab("learning");
+function loadTab(status, page = 1) {
+    currentTab = status;
+    fetch(`/api/my_learning?status=${status}&page=${page}`)
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) return;
 
-    document.querySelectorAll(".tabs label").forEach(label => {
-        label.addEventListener("click", () => {
-            setActiveTab(label);
-            const status = label.dataset.status;
-            loadTab(status);
+            // tabCache[status][page] = {
+            //     items: res.data,
+            //     pagination: res.pagination
+            // };
+
+            renderTable(status, res.data);
+            renderPagination(status, res.pagination);
         });
-    });
-});
-
+}
 
 function renderPagination(status, p) {
     const box = document.getElementById("pagination");
@@ -80,31 +98,6 @@ function renderPagination(status, p) {
     }
 }
 
-
-function loadTab(status, page = 1) {
-    currentTab = status;
-
-    // ✅ cache theo page
-    if (tabCache[status] && tabCache[status][page]) {
-        renderTable(status, tabCache[status][page].items);
-        renderPagination(status, tabCache[status][page].pagination);
-        return;
-    }
-
-    fetch(`/api/my_learning?status=${status}&page=${page}`)
-        .then(r => r.json())
-        .then(res => {
-            if (!res.success) return;
-
-            tabCache[status][page] = {
-                items: res.data,
-                pagination: res.pagination
-            };
-
-            renderTable(status, res.data);
-            renderPagination(status, res.pagination);
-        });
-}
 
 function renderTable(status, items) {    
     const panel = document.querySelector(`.panel`);
@@ -157,6 +150,8 @@ document.querySelectorAll(".tabs label").forEach(label => {
 });
 
 function update(btn, id, newStatus) {
+    
+
     fetch(`/update_learning_status/${id}`,
         {
         method:"POST",
@@ -168,30 +163,7 @@ function update(btn, id, newStatus) {
     .then(res => {
         if (!res.success) return;
         showToast(res.message);
-
-        // Remove dòng
-        const row = btn.closest("tr");
-        if(!row) return;
-            row.remove();
-
-        // 1️⃣ remove khỏi tab hiện tại
-        let item = tabCache[currentTab].find(i => i.word_id === id);
-        item.status = newStatus
-
-        tabCache[currentTab] =
-            tabCache[currentTab].filter(i => i.word_id !== id);
-
-        // 2️⃣ add vào tab mới
-        // Chưa có status này thì gọi API và thêm vào object
-        if (!newStatus in tabCache) {        
-            loadTab(newStatus)
-        }
-
-        tabCache[newStatus] = tabCache[newStatus] || [];
-        tabCache[newStatus].push(item);
-
-        // 3️⃣ render lại tab hiện tại
-        renderTable(currentTab, tabCache[currentTab]);
+        loadTab(currentTab);
     });
 }
 

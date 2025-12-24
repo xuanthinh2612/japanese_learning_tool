@@ -255,8 +255,9 @@
                 <li><a href="/articles">🈶 Bài viết</a></li>
                 <li><a href="/articles">🈶 Cộng đồng</a></li>
             </ul>
-            <hr>
             {% if g.user and g.user.role == 'admin' %}
+            <hr>
+
             <ul>
                 <li>
                     <a href="/add-article"><span class="icon">➕</span>Add Article</a>
@@ -278,7 +279,7 @@
             <div class="search-div">
                 <div class="search-box">
                     <input type="text" placeholder="🔍 Tìm từ, kanji, nghĩa...">
-                    <button>Tìm</button>
+                    <button>Tìm Kiếm</button>
                 </div>
             </div>
 

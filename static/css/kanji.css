@@ -34,7 +34,7 @@ h1 {
 /* Kanji Card            */
 /* ===================== */
 .kanji-card {
-    height: 180px; /* 🔽 giảm ~30% từ 260px */
+    height: 150px;
     padding: 14px;
 }
 
@@ -221,4 +221,14 @@ h1 {
     .kanji-actions {
         flex-direction: column;
     }
+}
+
+.card-tag-right-above {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    line-height: 1;
 }

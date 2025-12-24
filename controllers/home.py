@@ -21,11 +21,8 @@ def index():
 
 @app.route("/top-words")
 def top_words():
-    # run_import(
-    # kanji_file="data/kanji.json",
-    # vocab_file="data/vocab.json",
-    # grammar_file="data/grammar.json")
-
+    # run_import()
+    
     page = request.args.get("page", 1, type=int)
     per_page = 30   # hiển thị rất nhiều từ / page
 

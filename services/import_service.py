@@ -260,15 +260,21 @@ def import_grammar(file_path):
 # MAIN IMPORT FUNCTION
 # ===========================
 # def run_import():
-def run_import(kanji_file, vocab_file, grammar_file):
+def run_import():
+    kanji_file="data/kanji.json",
+    vocab_file="data/vocab.json",
+    grammar_file="data/grammar.json"
+
     print("Starting import...")
     # import_kanji(kanji_file)
-    import_vocab(vocab_file)
+    # import_vocab(vocab_file)
     # import_grammar(grammar_file)
+    # delete article
     # articles = Article.query.all()
     # for a in articles:
     #     db.session.delete(a)
-    # update_kanji_level()
+    update_kanji_level()
+    # delete Word
     # words = Word.query.all()
     # for a in words:
     #     db.session.delete(a)

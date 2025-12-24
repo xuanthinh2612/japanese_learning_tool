@@ -32,3 +32,7 @@ function toggleClass(collapsed, loaded) {
 }
 
 document.addEventListener('DOMContentLoaded', () => { loadSideBar() })
+
+function goBack() {
+    history.back()
+}

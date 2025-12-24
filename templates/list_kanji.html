@@ -12,16 +12,14 @@
 <div class="container kanji-container">
     {% for kanji in Kanji_list %}
         <a href="/kanji/{{ kanji.id }}" class="card kanji-card">
+            <div class="card-tag-right-above">{{kanji.level}}</div>
             <div class="kanji-char">
                 {{ kanji.character }}
             </div>
 
             <div class="kanji-info">
                 {% if kanji.onyomi %}
-                    <div class="reading">音: {{ kanji.onyomi }}</div>
-                {% endif %}
-                {% if kanji.kunyomi %}
-                    <div class="reading">訓: {{ kanji.kunyomi }}</div>
+                    <div class="reading">{{ kanji.hanviet }}</div>
                 {% endif %}
                 {% if kanji.meaning_vi %}
                     <div class="meaning">{{ kanji.meaning_vi }}</div>

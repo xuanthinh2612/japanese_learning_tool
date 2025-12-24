@@ -38,7 +38,7 @@ def add_to_learning(word_id):
 
 @app.route("/update_learning_status/<int:word_id>", methods=["POST"])
 def update_learning_status(word_id):
-    message = {"learning": "Đang học", "reviewing": "Đang học", "mastered": "Đã thuộc", "dropped": "Đã bỏ"}
+    message = {"searched": "Đã tra", "added": "Đã thêm", "learning": "Đang học", "reviewing": "Ôn tập", "mastered": "Đã thuộc", "dropped": "Đã bỏ"}
     if g.user is None:
         return {"message": "Vui lòng đăng nhập", "success": False}, 401
 
@@ -52,15 +52,11 @@ def update_learning_status(word_id):
 
     data = request.get_json()
     new_status = data.get("status")
-
-    print(new_status)
     
-    allowed = ["learning", "reviewing", "mastered", "dropped"]
+    allowed = ["added", "learning", "reviewing", "mastered", "dropped"]
     if new_status not in allowed:
         return {"message": "Trạng thái không hợp lệ", "success": False}
 
-
-    print(new_status)
     item.status = new_status
     db.session.commit()
 

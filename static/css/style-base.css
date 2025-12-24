@@ -43,7 +43,7 @@ body {
 /* ===================== */
 .kanji-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* ✅ 5 cột desktop */
+    grid-template-columns: repeat(5, 1fr); /* ✅ 5 cột desktop */
     gap: 24px;
     max-width: 900px;
     margin: 50px auto 90px;
