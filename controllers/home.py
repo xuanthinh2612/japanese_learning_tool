@@ -1,11 +1,12 @@
 from flask import render_template, request, redirect, flash
 from app import app, db
-from models import Article, Word, WordOccurrence, LearningItem
-from flask import g, session
+from models import Article, Word, WordOccurrence, LearningItem, WordForm, WordSense, WordGloss, Grammar, Kanji, WordReading
+from flask import g, session, jsonify
 from models import User
 from services import run_import
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql import func
+from sqlalchemy import or_
 
 
 @app.before_request
@@ -89,3 +90,89 @@ def display_word(word: Word):
     if word.readings:
         return word.readings[0].reading
     return ""
+
+
+@app.route("/search/<key>", methods=["POST"])
+def search(key):
+    if g.user is None:
+        flash("Vui lòng đăng nhập")
+        return redirect("/login")
+
+    return render_template("my_learning.html")
+
+
+@app.route("/api/search-suggest", methods=["POST"])
+def search_suggest():
+    data = request.get_json()
+    keyword = data.get("keyword")
+
+    words = (
+        db.session.query(Word)
+        .outerjoin(WordForm)
+        .outerjoin(WordSense)
+        .outerjoin(WordReading)
+        .outerjoin(WordGloss)
+        .filter(
+            or_(
+                WordForm.form.like(f"%{keyword}%"),
+                WordGloss.means_vi.like(f"%{keyword}%"),
+                WordReading.reading.like(f"%{keyword}%"),
+            )
+        )
+        .distinct()
+        .limit(10)
+        .all()
+    )
+
+    kanji_list = (
+        Kanji.query
+        .filter(
+            or_(
+                Kanji.character.like(f"%{keyword}%"),
+                Kanji.onyomi.like(f"%{keyword}%"),
+                Kanji.kunyomi.like(f"%{keyword}%"),
+                Kanji.hanviet.like(f"%{keyword}%"),
+                Kanji.meaning_vi.like(f"%{keyword}%"),
+            )
+        )
+        .limit(10)
+        .all()
+    )
+
+    grammars = (
+        Grammar.query
+        .filter(
+            or_(
+                Grammar.pattern.like(f"%{keyword}%"),
+                Grammar.meaning.like(f"%{keyword}%"),
+            )
+        )
+        .limit(10)
+        .all()
+    )
+
+    return jsonify({
+        "success": True,
+        "words": uniformDataWord(words),
+        "kanji_list": uniformDataKanji(kanji_list),
+        "grammars": uniformDataGrammar(grammars)
+        })
+
+def uniformDataWord(words):
+    words_data = []
+    for w in words:
+        if w.forms and w.senses:
+            words_data.append({
+                "form":w.forms[0].form, 
+                "means_vi":w.senses[0].glosses[0].means_vi
+                })
+
+    return words_data
+
+def uniformDataKanji(kanji_list):
+    kanji_list_data = [{"id": k.id, "character": k.character, "means_vi": k.meaning_vi} for k in kanji_list]
+    return kanji_list_data
+
+def uniformDataGrammar(grammars):
+    grammar_data = [{"id": g.id, "pattern": g.pattern, "meaning": g.meaning} for g in grammars]
+    return grammar_data

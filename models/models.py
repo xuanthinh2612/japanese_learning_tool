@@ -113,7 +113,7 @@ class WordReading(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     word_id = db.Column(db.Integer, db.ForeignKey("words.id"))
 
-    reading = db.Column(db.String(255))  # あんぜん
+    reading = db.Column(db.String(255))  # あ
     info = db.Column(db.String(255))      # ok
     priority = db.Column(db.String(255))
 
@@ -311,7 +311,7 @@ class LearningItem(db.Model):
         nullable=False
     )
 
-    # learning: đang học reviewing: đang ôn mastered: đã thuộc dropped: bỏ học ❌
+    # searched: đã tra, added: đã thêm, learning: đang học reviewing: đang ôn mastered: đã thuộc dropped: bỏ học ❌
     status = db.Column(db.String(20), default="learning")
     added_at = db.Column(db.DateTime, server_default=db.func.now())
     last_reviewed_at = db.Column(db.DateTime)

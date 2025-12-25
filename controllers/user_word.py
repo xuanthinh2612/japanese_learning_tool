@@ -6,6 +6,10 @@ from flask import g, session, jsonify, flash
 from sqlalchemy.orm import joinedload
 
 
+message = {"searched": "Đã tra", "added": "Đã thêm", "learning": "Đang học", "reviewing": "Đang ôn tập", "mastered": "Đã thuộc", "dropped": "Đã bỏ"}
+allowed = ["added", "learning", "reviewing", "mastered", "dropped"]
+
+
 @app.before_request
 def load_logged_in_user():
     user_id = session.get("user_id")
@@ -23,22 +27,21 @@ def add_to_learning(word_id):
     ).first()
 
     if item:
-        return {"message": "Từ đã có trong danh sách học", "success": False}
+        return {"message": "Từ đã có trong danh sách", "success": False}
 
     item = LearningItem(
         user_id=g.user.id,
         word_id=word_id,
-        status="learning"
+        status="added"
     )
     db.session.add(item)
     db.session.commit()
 
-    return {"message": "Đã thêm vào danh sách học", "success": True, "item_id": item.id}
+    return {"message": "Đã thêm vào danh sách", "success": True, "item_id": item.id}
 
 
 @app.route("/update_learning_status/<int:word_id>", methods=["POST"])
 def update_learning_status(word_id):
-    message = {"searched": "Đã tra", "added": "Đã thêm", "learning": "Đang học", "reviewing": "Ôn tập", "mastered": "Đã thuộc", "dropped": "Đã bỏ"}
     if g.user is None:
         return {"message": "Vui lòng đăng nhập", "success": False}, 401
 
@@ -53,7 +56,6 @@ def update_learning_status(word_id):
     data = request.get_json()
     new_status = data.get("status")
     
-    allowed = ["added", "learning", "reviewing", "mastered", "dropped"]
     if new_status not in allowed:
         return {"message": "Trạng thái không hợp lệ", "success": False}
 
@@ -77,7 +79,7 @@ def word_detail(word):
             joinedload(Word.forms),
             joinedload(Word.readings),
             joinedload(Word.senses)
-                .joinedload(WordSense.glosses),
+            .joinedload(WordSense.glosses),
             joinedload(Word.senses)
                 .joinedload(WordSense.examples),
         )
@@ -98,11 +100,25 @@ def word_detail(word):
         .all()
     )
 
+    user_word = LearningItem.query.filter_by(user_id=g.user.id, word_id=word_obj.id).first()
+    if user_word:
+        btn_data = {
+            'disabled_flg': user_word.status in allowed,
+            'display_text': message[user_word.status]
+            }
+    else:
+        btn_data = {
+            'disabled_flg': False,
+            'display_text': "⭐ Thêm vào danh sách học"
+            }
+
+
     return render_template(
         "word_detail.html",
         word=word_obj,
         articles=articles,
-        word_text=word
+        word_text=word,
+        btn_data=btn_data
     )
 
 

@@ -73,8 +73,14 @@
         }
 
         /* Khu vực scrollable */
-        .sidebar, .navbar, .main-content { overflow-y:auto; overflow-x:hidden; }
-        
+        .sidebar, .main-content {
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            overflow: visible;   /* ⭐ QUAN TRỌNG */
+        }        
         /* Khi JS load xong → hiện ra */
         .sidebar.loaded {
             transform: translateX(0); /* slide vào */
@@ -142,6 +148,7 @@
         }
 
         .search-div {
+            position: relative;
             display: block;
             width: 30%;
         }
@@ -197,7 +204,72 @@
             /* padding: 6px 12px; */
             cursor: pointer;
         }
-    </style>
+
+        /* Suggest word */
+        .search-suggest {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    margin-top: 8px;
+    max-height: 420px;
+    overflow-y: auto;
+    z-index: 2000;
+}
+
+.search-suggest.hidden {
+    display: none;
+}
+
+.suggest-section {
+    padding: 10px 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.suggest-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 6px;
+}
+
+.suggest-item {
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.suggest-item:hover {
+    background: #f2f6ff;
+}
+
+.word-main {
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.word-meaning {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.suggest-item.grammar-search {
+    background: #e1ffedc7;
+    color: #1e5c18;
+    margin-bottom: 6px;
+    border-radius: 12px;
+}
+
+.suggest-item.kanji-search {
+    background: #dfe2fab5;
+    color: #17225b;
+    margin-bottom: 6px;
+    border-radius: 12px;
+}
+
+</style>
 </head>
 
 <body>
@@ -278,9 +350,11 @@
             </div>
             <div class="search-div">
                 <div class="search-box">
-                    <input type="text" placeholder="🔍 Tìm từ, kanji, nghĩa...">
-                    <button>Tìm Kiếm</button>
+                    <input id="key_search" type="text" placeholder="🔍 Tìm từ, kanji, nghĩa...">
+                    <button type="button" id="search-btn">Tìm Kiếm</button>
                 </div>
+                <!-- 🔽 Search Suggest Result -->
+                <div id="search-suggest" class="search-suggest hidden"></div>
             </div>
 
             <div class="user-actions">
@@ -310,11 +384,12 @@
                     <a href="/about">About</a> | <a href="/contact">Contact: support@toihoctiengnhat.com</a>
                 </footer>
             </div>
+            <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
 
         </main>
 
     </div>
-
+    <script ></script>
 </body>
 
 </html>

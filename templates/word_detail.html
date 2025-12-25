@@ -93,7 +93,12 @@
     <!-- ACTIONS -->
     <!-- ===================== -->
     <div class="btn-actions">
-        <button class="btn primary">⭐ Thêm vào danh sách học</button>
+        <button class="btn primary add-word-btn" 
+        onclick="addWordToMyList({{word.id}}, this)" 
+        {% if btn_data.disabled_flg %}disabled{% endif %}
+         >
+            {{btn_data.display_text}}
+        </button>
         <button class="btn ghost" onclick="goBack()">← Quay lại danh sách</button>
     </div>
 
@@ -113,7 +118,6 @@
 
         document.querySelectorAll(".important-word").forEach(el => {
             if (el.dataset.word.trim() == keyword) {
-                console.log(keyword)
                 el.classList.add('highlight-word');
             }
         });
@@ -196,5 +200,43 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<script>
+    function addWordToMyList(wordId, btn) {
+        fetch(`/add_to_learning/${wordId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        })
+        .then(r => r.json())
+        .then(res => {
+            showToast(res.message);
+            if (res.success) {
+                btn.disabled = true
+                btn.innerHTML = "Đã thêm vào danh sách"
+            }
+        });
+    }
+    
+    function showToast(msg){
+        const box = document.getElementById("toast-container");
+        const t = document.createElement("div");
+        t.innerText = msg;
+        t.style.cssText = `
+            background: linear-gradient(90deg, #3498dbb7, #2ecc7097);
+            color: #fff;
+            padding: 12px 20px;
+            margin-top: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-weight: 500;
+            min-width: 180px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+        `;
+        box.insertBefore(t, box.firstChild);
 
+        setTimeout(()=>{ t.style.opacity = 1; t.style.transform = 'translateY(0)'; }, 10);
+        setTimeout(()=>{ t.style.opacity = 0; t.style.transform = 'translateY(20px)'; setTimeout(()=>t.remove(), 300); }, 2500);
+    }
+</script>
 {% endblock %}
