@@ -73,8 +73,26 @@ def top_words():
     
     
 
-@app.route("/my_learning")
+@app.route("/my-words")
 def my_learning():
+    if g.user is None:
+        flash("Vui lòng đăng nhập")
+        return redirect("/login")
+
+    return render_template("my_learning.html")
+    
+
+@app.route("/my-grammars")
+def my_grammars():
+    if g.user is None:
+        flash("Vui lòng đăng nhập")
+        return redirect("/login")
+
+    return render_template("my_learning.html")
+    
+
+@app.route("/my-kanji")
+def my_kanji():
     if g.user is None:
         flash("Vui lòng đăng nhập")
         return redirect("/login")

@@ -1,10 +1,13 @@
 from flask import render_template, request, redirect
 from app import app, db
-from models import Article, Word, WordOccurrence, LearningItem, Grammar
+from models import LearningItem, Grammar, UserGrammar
 from flask import g, session
 from models import User
 from services import run_import
 
+
+message = {"searched": "Đã tra", "added": "Đã thêm", "learning": "Đang học", "reviewing": "Đang ôn tập", "mastered": "Đã thuộc", "dropped": "Đã bỏ"}
+allowed = ["added", "learning", "reviewing", "mastered", "dropped"]
 
 @app.before_request
 def load_logged_in_user():
@@ -33,6 +36,45 @@ def grammar_list():
 @app.route("/grammar/<int:grammar_id>")
 def grammar_detail(grammar_id):
     grammar = Grammar.query.get_or_404(grammar_id)
+    
+    user_grammar = None
+    if g.user:
+        user_grammar = UserGrammar.query.filter_by(user_id=g.user.id, grammar_id=grammar_id).first()
+    if user_grammar:
+        btn_data = {
+            'disabled_flg': user_grammar.status in allowed,
+            'display_text': message[user_grammar.status]
+            }
+    else:
+        btn_data = {
+            'disabled_flg': False,
+            'display_text': "⭐ Thêm vào danh sách học"
+            }
+
     return render_template("grammar_detail.html", 
                            grammar=grammar,
-                           none_display_flg=True)
+                           none_display_flg=True,
+                           btn_data=btn_data)
+
+
+@app.route("/api/add-grammar/<int:grammar_id>", methods=["POST"])
+def add_grammar(grammar_id):
+    if g.user is None:
+        return {"message": "Vui lòng đăng nhập", "success": False}, 401
+
+    user_grammar = UserGrammar.query.filter_by(user_id=g.user.id, grammar_id=grammar_id).first()
+
+    if user_grammar:
+        return {"message": "đã có trong danh sách", "success": False}
+
+    item = UserGrammar(
+        user_id=g.user.id,
+        grammar_id=grammar_id,
+        status="added"
+    )
+    
+    db.session.add(item)
+    db.session.commit()
+
+    return {"message": "Đã thêm vào danh sách", "success": True, "item_id": item.id}
+

@@ -99,8 +99,10 @@ def word_detail(word):
         .limit(1)
         .all()
     )
-
-    user_word = LearningItem.query.filter_by(user_id=g.user.id, word_id=word_obj.id).first()
+    
+    user_word = None
+    if g.user:
+        user_word = LearningItem.query.filter_by(user_id=g.user.id, word_id=word_obj.id).first()
     if user_word:
         btn_data = {
             'disabled_flg': user_word.status in allowed,
@@ -178,7 +180,7 @@ def get_word(keyword):
 
 
 @app.route("/api/my_learning")
-def api_my_learning():
+def api_my_words():
     
     if g.user is None:
         return jsonify(

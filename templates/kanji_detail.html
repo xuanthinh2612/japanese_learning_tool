@@ -70,10 +70,17 @@
 
     <!-- Actions -->
     <div class="btn-actions">
-        <button class="btn primary">⭐ Thêm vào danh sách học</button>
+        <button class="btn primary" 
+        onclick="addKanji({{kanji.id}}, this)"
+        {% if btn_data.disabled_flg %}disabled{% endif %}
+         >
+            {{btn_data.display_text}}
+        </button>
+
         <button class="btn ghost" onclick="goBack()">← Quay lại danh sách</button>
     </div>
 
 </div>
+<script src="{{ url_for('static', filename='js/grammar.js')}}"></script>
 
 {% endblock %}

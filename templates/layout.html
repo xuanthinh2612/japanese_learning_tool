@@ -24,7 +24,8 @@
         .sidebar {
             z-index: 1000;
             position: fixed;
-            top: 50px; /* navbar */
+            top: 50px;
+            /* navbar */
             left: 0;
 
             width: 230px;
@@ -36,59 +37,88 @@
 
             overflow-y: auto;
             overflow-x: hidden;
-            
-            /* Scroll bar */
-            scrollbar-width: thin; /* Firefox */
-            scrollbar-color: rgba(0, 0, 0, 0.137) transparent; /* màu thanh và background */
 
-            transform: translateX(-100%); /* ẩn bên trái */
+            /* Scroll bar */
+            scrollbar-width: thin;
+            /* Firefox */
+            scrollbar-color: rgba(0, 0, 0, 0.137) transparent;
+            /* màu thanh và background */
+
+            transform: translateX(-100%);
+            /* ẩn bên trái */
             transition: transform 0.3s ease;
         }
 
         /* Scroll mảnh, mờ cho Chrome/Safari/Edge */
-        ::-webkit-scrollbar { width:6px; height:6px; }
-        ::-webkit-scrollbar-track { background:transparent; }
-        ::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.25); border-radius:3px; }
-        ::-webkit-scrollbar-thumb:hover { background:rgba(0,0,0,0.5); }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
 
         /* Firefox */
-        * { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.25) transparent; }
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+        }
+
         /* Chrome/Safari/Edge */
         .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(0,0,0,0.25);
+            background: rgba(0, 0, 0, 0.25);
             border-radius: 3px;
 
             /* Thu ngắn chiều dài thanh scroll */
-            min-height: 30px;      /* thanh ngắn nhất */
-            margin-top: 5px;       /* cách đầu */
-            margin-bottom: 5px;    /* cách cuối */
+            min-height: 30px;
+            /* thanh ngắn nhất */
+            margin-top: 5px;
+            /* cách đầu */
+            margin-bottom: 5px;
+            /* cách cuối */
         }
 
         .navbar::-webkit-scrollbar-thumb {
-            background: rgba(0,0,0,0.25);
+            background: rgba(0, 0, 0, 0.25);
             border-radius: 3px;
-            min-width: 30px;       /* thanh ngang ngắn */
+            min-width: 30px;
+            /* thanh ngang ngắn */
             margin-left: 5px;
             margin-right: 5px;
         }
 
         /* Khu vực scrollable */
-        .sidebar, .main-content {
+        .sidebar,
+        .main-content {
             overflow-y: auto;
             overflow-x: hidden;
         }
 
         .navbar {
-            overflow: visible;   /* ⭐ QUAN TRỌNG */
-        }        
+            overflow: visible;
+            /* ⭐ QUAN TRỌNG */
+        }
+
         /* Khi JS load xong → hiện ra */
         .sidebar.loaded {
-            transform: translateX(0); /* slide vào */
+            transform: translateX(0);
+            /* slide vào */
         }
 
         /* Toggle đóng → chỉ cần collapsed */
         .sidebar.collapsed {
-            transform: translateX(-100%); /* slide ra */
+            transform: translateX(-100%);
+            /* slide ra */
         }
 
 
@@ -126,7 +156,7 @@
             font-weight: 600;
         }
 
-        
+
 
         .overlay {
             display: none;
@@ -207,69 +237,68 @@
 
         /* Suggest word */
         .search-suggest {
-    position: absolute;
-    top: 100%;
-    width: 100%;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    margin-top: 8px;
-    max-height: 420px;
-    overflow-y: auto;
-    z-index: 2000;
-}
+            position: absolute;
+            top: 100%;
+            width: 100%;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            margin-top: 8px;
+            max-height: 420px;
+            overflow-y: auto;
+            z-index: 2000;
+        }
 
-.search-suggest.hidden {
-    display: none;
-}
+        .search-suggest.hidden {
+            display: none;
+        }
 
-.suggest-section {
-    padding: 10px 14px;
-    border-bottom: 1px solid #eee;
-}
+        .suggest-section {
+            padding: 10px 14px;
+            border-bottom: 1px solid #eee;
+        }
 
-.suggest-title {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #666;
-    margin-bottom: 6px;
-}
+        .suggest-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #666;
+            margin-bottom: 6px;
+        }
 
-.suggest-item {
-    padding: 8px 10px;
-    border-radius: 8px;
-    cursor: pointer;
-}
+        .suggest-item {
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
 
-.suggest-item:hover {
-    background: #f2f6ff;
-}
+        .suggest-item:hover {
+            background: #f2f6ff;
+        }
 
-.word-main {
-    font-weight: 600;
-    font-size: 1.05rem;
-}
+        .word-main {
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
 
-.word-meaning {
-    font-size: 0.85rem;
-    color: #666;
-}
+        .word-meaning {
+            font-size: 0.85rem;
+            color: #666;
+        }
 
-.suggest-item.grammar-search {
-    background: #e1ffedc7;
-    color: #1e5c18;
-    margin-bottom: 6px;
-    border-radius: 12px;
-}
+        .suggest-item.grammar-search {
+            background: #e1ffedc7;
+            color: #1e5c18;
+            margin-bottom: 6px;
+            border-radius: 12px;
+        }
 
-.suggest-item.kanji-search {
-    background: #dfe2fab5;
-    color: #17225b;
-    margin-bottom: 6px;
-    border-radius: 12px;
-}
-
-</style>
+        .suggest-item.kanji-search {
+            background: #dfe2fab5;
+            color: #17225b;
+            margin-bottom: 6px;
+            border-radius: 12px;
+        }
+    </style>
 </head>
 
 <body>
@@ -287,22 +316,38 @@
                     </a>
                 </li>
                 <li>
-                    <a class="{% if request.path.startswith('/top-words') %}active{% endif %}" href="/top-words">📚 Từ
-                        vựng thông dụng
+                    <a class="{% if request.path.startswith('/top-words') %}active{% endif %}" href="/top-words">
+                        📚 Từ vựng thông dụng
                     </a>
                 </li>
                 <li>
-                    <a class="{% if request.path.startswith('/kanji') %}active{% endif %}" href="/kanji">🈶 Kanji
+                    <a class="{% if request.path.startswith('/kanji') %}active{% endif %}" href="/kanji">
+                        🈶 Kanji
                     </a>
                 </li>
                 <li>
-                    <a class="{% if request.path.startswith('/grammar') %}active{% endif %}" href="/grammar">✍️ Ngữ pháp
+                    <a class="{% if request.path.startswith('/grammar') %}active{% endif %}" href="/grammar">
+                        ✍️ Ngữ pháp
                     </a>
                 </li>
             </ul>
             <hr>
             <ul>
-                <li><a href="/">📖 Game học từ</a></li>
+                <li>
+                    <a class="{% if request.path.startswith('/my-words') %}active{% endif %}" href="/my-words">
+                        ✍️ Từ vựng của tôi
+                    </a>
+                </li>
+                <li>
+                    <a class="{% if request.path.startswith('/my-grammars') %}active{% endif %}" href="/my-grammars">
+                        ✍️ Ngữ pháp của tôi
+                    </a>
+                </li>
+                <li>
+                    <a class="{% if request.path.startswith('/my-kanji') %}active{% endif %}" href="/my-kanji">
+                        ✍️ Kanji của tôi
+                    </a>
+                </li>
                 <li><a href="/top-words">📚 Bảng xếp hạng</a></li>
                 <li><a href="/articles">🈶 Bài viết</a></li>
                 <li><a href="/articles">🈶 Cộng đồng</a></li>
@@ -373,8 +418,9 @@
         <main class="main-content">
             <!-- Search box riêng -->
             {% block content %}{% endblock %}
-            
-            <div id="word-popup" style="display:none; position:absolute; background:white; border:1px solid #ccc; padding:10px;"></div>
+
+            <div id="word-popup"
+                style="display:none; position:absolute; background:white; border:1px solid #ccc; padding:10px;"></div>
 
             <!-- Footer chung -->
             <div>
@@ -389,7 +435,7 @@
         </main>
 
     </div>
-    <script ></script>
+    <script></script>
 </body>
 
 </html>

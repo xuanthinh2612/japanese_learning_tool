@@ -299,6 +299,8 @@ def update_kanji_level():
     n1_list = Kanji.query.filter(
         and_ (Kanji.frequency > 1250, Kanji.frequency <= 2501)
         )
+    
+    n1_plus_list = Kanji.query.filter_by(Kanji.frequency == None)
 
     for k in n5_list:
         k.level = "N5"
@@ -318,6 +320,10 @@ def update_kanji_level():
     
     for k in n1_list:
         k.level = "N1"
+        db.session.add(k)    
+        
+    for k in n1_plus_list:
+        k.level = "N1+"
         db.session.add(k)    
 
     db.session.commit()

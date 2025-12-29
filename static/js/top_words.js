@@ -1,36 +1,3 @@
-// JS vẫn giữ nguyên
-function showToast(msg){
-    const box = document.getElementById("toast-container");
-    const t = document.createElement("div");
-    t.innerText = msg;
-    t.style.cssText = `
-        background: linear-gradient(90deg, #3498db, #2ecc71);
-        color: #fff;
-        padding: 12px 20px;
-        margin-top: 10px;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        font-weight: 500;
-        min-width: 180px;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.3s, transform 0.3s;
-    `;
-    // Thêm vào container ở dưới cùng (hiển thị từ dưới lên)
-    box.insertBefore(t, box.firstChild);
-
-    setTimeout(()=>{
-        t.style.opacity = 1;
-        t.style.transform = 'translateY(0)';
-    }, 10);
-
-    setTimeout(()=>{
-        t.style.opacity = 0;
-        t.style.transform = 'translateY(20px)';
-        setTimeout(()=>t.remove(), 300);
-    }, 2500);
-}
-
 function addWordToMyList (wordId){
         fetch(`/add_to_learning/${wordId}`,{
             method:"POST",

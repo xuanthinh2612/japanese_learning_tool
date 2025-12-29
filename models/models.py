@@ -20,6 +20,18 @@ class User(db.Model):
         back_populates="user",
         cascade="all, delete-orphan"
     )
+    
+    kanji_list = db.relationship(
+        "UserKanji",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    
+    grammars = db.relationship(
+        "UserGrammar",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -207,6 +219,12 @@ class Kanji(db.Model):
 
     # Examples (space separated kanji words)
     examples = db.Column(db.Text)
+    
+    learning_kanji = db.relationship(
+        "UserKanji",
+        back_populates="kanji",
+        cascade="all, delete-orphan"
+    )
 
 
 # ==================================================
@@ -223,6 +241,12 @@ class Grammar(db.Model):
 
     usages = db.relationship(
         "GrammarUsage",
+        back_populates="grammar",
+        cascade="all, delete-orphan"
+    )
+    
+    learning_grammars = db.relationship(
+        "UserGrammar",
         back_populates="grammar",
         cascade="all, delete-orphan"
     )
@@ -322,15 +346,69 @@ class LearningItem(db.Model):
     user = db.relationship("User", back_populates="learning_items")
     word = db.relationship("Word", back_populates="learning_items")
 
+
 # ==================================================
-# USER SENTENCE / SRS
+# LEARNING / SRS
 # ==================================================
-class UserSentence(db.Model):
+class UserKanji(db.Model):
+    __tablename__ = "user_kanji"
+
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer)
-    sentence = db.Column(db.Text)
-    translation = db.Column(db.Text)
-    source = db.Column(db.String(50))
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
+
+    kanji_id = db.Column(
+        db.Integer,
+        db.ForeignKey("kanji.id"),
+        nullable=False
+    )
+
+    # searched: đã tra, added: đã thêm, learning: đang học reviewing: đang ôn mastered: đã thuộc dropped: bỏ học ❌
+    status = db.Column(db.String(20), default="learning")
+    added_at = db.Column(db.DateTime, server_default=db.func.now())
+    last_reviewed_at = db.Column(db.DateTime)
+    review_count = db.Column(db.Integer, default=0)
+    dropped_at = db.Column(db.DateTime)
+    drop_reason = db.Column(db.String(255))
+
+    user = db.relationship("User", back_populates="kanji_list")
+    kanji = db.relationship("Kanji", back_populates="learning_kanji")
+
+
+# ==================================================
+# LEARNING / SRS
+# ==================================================
+class UserGrammar(db.Model):
+    __tablename__ = "user_grammar"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
+
+    grammar_id = db.Column(
+        db.Integer,
+        db.ForeignKey("grammar.id"),
+        nullable=False
+    )
+
+    # searched: đã tra, added: đã thêm, learning: đang học reviewing: đang ôn mastered: đã thuộc dropped: bỏ học ❌
+    status = db.Column(db.String(20), default="learning")
+    added_at = db.Column(db.DateTime, server_default=db.func.now())
+    last_reviewed_at = db.Column(db.DateTime)
+    review_count = db.Column(db.Integer, default=0)
+    dropped_at = db.Column(db.DateTime)
+    drop_reason = db.Column(db.String(255))
+
+    user = db.relationship("User", back_populates="grammars")
+    grammar = db.relationship("Grammar", back_populates="learning_grammars")
 
 
 # ==================================================
