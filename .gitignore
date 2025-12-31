@@ -1,6 +1,6 @@
-/__pycache__
-/env
-/controllers/__pycache__
-/models/__pycache__
-/services/__pycache__
-/migrations/
+backend/__pycache__
+backend/env
+backend/controllers/__pycache__
+backend/models/__pycache__
+backend/services/__pycache__
+backend/migrations/
