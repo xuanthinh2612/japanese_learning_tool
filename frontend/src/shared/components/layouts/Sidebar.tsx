@@ -1,11 +1,17 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import clsx from "clsx";
 
-const Sidebar: React.FC = () => {
+
+type Props = {
+  isOpen: boolean;
+};
+
+const Sidebar = ({ isOpen }: Props) => {
   const location = useLocation();
-  
+
   return (
-    <aside className="sidebar" id="sidebar">
+    <aside className={clsx("sidebar", !isOpen && "collapsed")}>
       <h3>Menu</h3>
       <ul>
         <li>

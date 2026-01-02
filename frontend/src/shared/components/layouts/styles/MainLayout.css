@@ -1,5 +1,5 @@
 /* ===================== */
-/* General Styles        */
+/* Global Styles        */
 /* ===================== */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -413,7 +413,6 @@ Add in index
     scrollbar-color: rgba(0, 0, 0, 0.137) transparent;
     /* màu thanh và background */
 
-    transform: translateX(-100%);
     /* ẩn bên trái */
     transition: transform 0.3s ease;
 }
@@ -478,22 +477,11 @@ Add in index
     /* ⭐ QUAN TRỌNG */
 }
 
-/* Khi JS load xong → hiện ra */
-.sidebar.loaded {
-    transform: translateX(0);
-    /* slide vào */
-}
-
 /* Toggle đóng → chỉ cần collapsed */
 .sidebar.collapsed {
     transform: translateX(-100%);
     /* slide ra */
 }
-
-
-/* .sidebar.hidden {
-    transform: translateX(-100%);
-} */
 
 .sidebar h3 {
     margin-bottom: 15px;

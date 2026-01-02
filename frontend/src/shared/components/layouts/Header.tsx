@@ -1,11 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Header: React.FC = () => {
+type Props = {
+  onToggleSidebar: () => void;
+};
+
+const Header = ({ onToggleSidebar }: Props) => {
+
   return (
     <div className="navbar">
       <div className="logo">
-        <button className="menu-toggle" id="menuToggle">☰</button>
+        <button className="menu-toggle" onClick={onToggleSidebar}>☰</button>
         <Link to="/">toihoctiengnhat.com</Link>
       </div>
       <div className="search-div">
@@ -19,6 +24,7 @@ const Header: React.FC = () => {
       <div className="user-actions">
         {/* Tình trạng người dùng: đã đăng nhập hay chưa */}
         <span className="username">👤&nbsp;&nbsp;Tên người dùng</span>
+        <Link to="/login">🚪 Đăng Nhập</Link>
         <Link to="/logout">🚪 Đăng Xuất</Link>
       </div>
     </div>
