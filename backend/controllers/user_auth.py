@@ -66,8 +66,8 @@ def api_login():
 @app.route("/api/profile", methods=["GET"])
 @jwt_required()
 def profile():
-    user = get_jwt_identity()
-    return jsonify(user=user)
+    username = get_jwt_identity()
+    return jsonify(username=username)
 
 
 @app.route("/api/register", methods=["POST"])

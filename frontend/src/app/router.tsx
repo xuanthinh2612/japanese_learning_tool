@@ -7,20 +7,8 @@ import AuthLayout from "@/shared/components/layouts/AuthLayout";
 import HomePage from "@/features/homePage/pages/HomePage";
 
 export const router = createBrowserRouter([
-  {
-    path: "/login",
-    element: <AuthLayout><Login /></AuthLayout>,
-  },
-  {
-    path: "/profile",
-    element: <MainLayout><Profile /></MainLayout>,
-  },
-  {
-    path: "/register",
-    element: <AuthLayout><Register /></AuthLayout>,
-  },
-  {
-    path: "/",
-    element: <MainLayout><HomePage /></MainLayout>,
-  },
+  { path: "/login", element: <AuthLayout><Login /></AuthLayout>, },
+  { path: "/register", element: <AuthLayout><Register /></AuthLayout>, },
+  { path: "/profile", element: <MainLayout><Profile /></MainLayout>, },
+  { path: "/", element: <MainLayout><HomePage /></MainLayout>, },
 ]);

@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { loginRequest } from "../services/service.ts";
+import { loginRequest, getProfileRequest } from "../services/service.ts";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "@/features/auth/context/AuthContext";
+
 
 // Không dùng styles từ module nữa
 const Login = () => {
@@ -9,6 +11,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false); // Trạng thái loading
     const [error, setError] = useState(""); // Lưu trữ thông báo lỗi
     const navigate = useNavigate();
+    const { setUser } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,6 +30,10 @@ const Login = () => {
 
             // Lưu token và chuyển hướng
             localStorage.setItem("token", res.data.access_token);
+            // gọi profile ngay
+            const profile = await getProfileRequest();
+            setUser(profile.data);
+
             navigate("/profile", { replace: true });
         } catch (error: any) {
             setError("Login failed. Please check your credentials and try again.");

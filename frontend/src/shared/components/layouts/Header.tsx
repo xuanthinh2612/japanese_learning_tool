@@ -1,11 +1,23 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/features/auth/context/AuthContext";
+
 
 type Props = {
   onToggleSidebar: () => void;
 };
 
 const Header = ({ onToggleSidebar }: Props) => {
+  const navigate = useNavigate();
+  const { user, setUser} = useAuth();
+  
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    navigate("/login", { replace: true });
+  };
 
   return (
     <div className="navbar">
@@ -23,9 +35,17 @@ const Header = ({ onToggleSidebar }: Props) => {
 
       <div className="user-actions">
         {/* Tình trạng người dùng: đã đăng nhập hay chưa */}
-        <span className="username">👤&nbsp;&nbsp;Tên người dùng</span>
-        <Link to="/login">🚪 Đăng Nhập</Link>
-        <Link to="/logout">🚪 Đăng Xuất</Link>
+        { user ? (
+          <>
+            <span className="username">👤&nbsp;&nbsp;{`${user.username}`}</span>
+            <a href="#" onClick={handleLogout} >🚪 Đăng Xuất</a>
+          </>
+        ) : (
+          <>
+            <Link to="/login">🚪 Đăng Nhập</Link>
+          </>
+        ) }
+        
       </div>
     </div>
   );
