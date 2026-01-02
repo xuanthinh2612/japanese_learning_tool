@@ -18,7 +18,8 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const res = await api.get<ProfileResponse>("/profile");
-        setUser(res.data.user);
+        const profileData = res.data as ProfileResponse;  
+        setUser(profileData.user);
       } catch (err) {
         setError("Không thể lấy thông tin người dùng");
       } finally {
