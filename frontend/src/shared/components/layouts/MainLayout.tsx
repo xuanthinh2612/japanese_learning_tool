@@ -7,7 +7,7 @@ import './styles/MainLayout.css';  // Import CSS chung cho toàn bộ
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="layout">
-      {/* <Sidebar /> */}
+      <Sidebar />
       <div className="main-content">
         <Header />
         <main>

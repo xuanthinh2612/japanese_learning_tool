@@ -6,7 +6,7 @@ const Header: React.FC = () => {
     <div className="navbar">
       <div className="logo">
         <button className="menu-toggle" id="menuToggle">☰</button>
-        {/* <Link to="/">toihoctiengnhat.com</Link> */}
+        <Link to="/">toihoctiengnhat.com</Link>
       </div>
       <div className="search-div">
         <div className="search-box">
@@ -19,7 +19,7 @@ const Header: React.FC = () => {
       <div className="user-actions">
         {/* Tình trạng người dùng: đã đăng nhập hay chưa */}
         <span className="username">👤&nbsp;&nbsp;Tên người dùng</span>
-        {/* <Link to="/logout">🚪 Đăng Xuất</Link> */}
+        <Link to="/logout">🚪 Đăng Xuất</Link>
       </div>
     </div>
   );

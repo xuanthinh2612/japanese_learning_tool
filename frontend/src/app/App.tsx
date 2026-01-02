@@ -8,10 +8,7 @@ import AuthLayout from "@/shared/components/layouts/AuthLayout";
 function App() {
   return (
     <Providers>
-      <MainLayout>
         <RouterProvider router={router} />
-      </MainLayout>
-
     </Providers>
   );
 }
