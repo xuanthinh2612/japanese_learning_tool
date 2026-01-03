@@ -2,16 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth/context/AuthContext";
+import { useUI } from "../context/UIContext";
 
 
-type Props = {
-  onToggleSidebar: () => void;
-};
-
-const Header = ({ onToggleSidebar }: Props) => {
+const Header = () => {
   const navigate = useNavigate();
   const { user, setUser} = useAuth();
-  
+  const { toggleSidebar } = useUI();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -22,7 +19,7 @@ const Header = ({ onToggleSidebar }: Props) => {
   return (
     <div className="navbar">
       <div className="logo">
-        <button className="menu-toggle" onClick={onToggleSidebar}>☰</button>
+        <button className="menu-toggle" onClick={toggleSidebar}>☰</button>
         <Link to="/">toihoctiengnhat.com</Link>
       </div>
       <div className="search-div">

@@ -8,7 +8,14 @@ type AuthUser = {
 type AuthContextType = {
     user: AuthUser | null;
     setUser: (user: AuthUser | null) => void;
+    // token: string | null;
+    // role: string | null;
+    // loading: boolean;
+    // login: () => Promise<void>;
+    // logout: () => void;
 };
+
+
 
 const AuthContext = createContext<AuthContextType | null>(null);
 

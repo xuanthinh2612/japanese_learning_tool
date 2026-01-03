@@ -7,17 +7,11 @@ import './styles/MainLayout.css';  // Import CSS chung cho toàn bộ
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
-  };
-
   return (
     <div className="layout">
-      <Sidebar isOpen={isSidebarOpen}/>
+      <Sidebar />
       <div className="main-content">
-        <Header onToggleSidebar={toggleSidebar} />
+        <Header />
         <main>
           {children}
         </main>
