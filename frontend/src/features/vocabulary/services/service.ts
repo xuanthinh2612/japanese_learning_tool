@@ -25,3 +25,13 @@ export const addWordToList = async (word_id: string) => {
         throw error;
     }
 };
+// Hàm để thêm từ vào danh sách học
+export const fetchWordDetail = async (word_text: string) => {
+    try {
+        const response = await api.post(`/word-detail/${word_text}`);
+        return response.data;  // Trả về dữ liệu từ response
+    } catch (error) {
+        console.error("Error adding word to list:", error);
+        throw error;
+    }
+};

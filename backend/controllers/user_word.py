@@ -263,3 +263,75 @@ def api_add_to_learning(word_id):
             "item_id": item.id
          }
     )
+
+
+@app.route("/api/word-detail/<word_text>")
+def api_word_detail(word_text):
+    # 1. Lấy từ chính từ database
+    word_obj = (
+        Word.query
+        .join(WordForm)
+        .filter(WordForm.form == word_text)
+        .options(
+            joinedload(Word.forms),
+            joinedload(Word.readings),
+            joinedload(Word.senses)
+            .joinedload(WordSense.glosses),
+            joinedload(Word.senses)
+                .joinedload(WordSense.examples),
+        )
+        .first_or_404()
+    )
+
+    # 2. Lấy bài viết liên quan
+    articles = (
+        db.session.query(
+            Article.title,
+            Article.source,
+            Article.content,
+            WordOccurrence.count
+        )
+        .join(WordOccurrence)
+        .filter(WordOccurrence.word_id == word_obj.id)
+        .limit(1)
+        .all()
+    )
+
+    # 3. Kiểm tra trạng thái của từ trong danh sách học của người dùng
+    user_word = None
+    if g.user:
+        user_word = LearningItem.query.filter_by(user_id=g.user.id, word_id=word_obj.id).first()
+    if user_word:
+        btn_data = {
+            'disabled_flg': user_word.status in allowed,
+            'display_text': message[user_word.status]
+        }
+    else:
+        btn_data = {
+            'disabled_flg': False,
+            'display_text': "⭐ Thêm vào danh sách học"
+        }
+
+    # 4. Trả về dữ liệu dạng JSON
+    return jsonify({
+        'forms': [form.form for form in word_obj.forms],
+        'readings': [reading.reading for reading in word_obj.readings],
+        'senses': [
+            {
+                'pos': sense.pos,
+                'meanings': {
+                    'vi': [g.means_vi for g in sense.glosses if g.means_vi]
+                },
+                'examples': [{'sentence': ex.sentence, 'translation_vi': ex.translation_vi} for ex in sense.examples]
+            } for sense in word_obj.senses
+        ],
+        'articles': [
+            {
+                'title': title,
+                'source': source,
+                'content': content,
+                'count': count
+            } for title, source, content, count in articles
+        ],
+        'btn_data': btn_data
+    })

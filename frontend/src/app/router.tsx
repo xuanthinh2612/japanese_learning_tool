@@ -6,6 +6,7 @@ import MainLayout from "@/shared/components/layouts/MainLayout";
 import AuthLayout from "@/shared/components/layouts/AuthLayout";
 import HomePage from "@/features/homePage/pages/HomePage";
 import TopWords from "@/features/vocabulary/pages/TopWords";
+import WordDetail from "@/features/vocabulary/pages/WordDetail";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <AuthLayout><Login /></AuthLayout>, },
@@ -13,4 +14,5 @@ export const router = createBrowserRouter([
   { path: "/profile", element: <MainLayout><Profile /></MainLayout>, },
   { path: "/", element: <MainLayout><HomePage /></MainLayout>, },
   { path: "/top-words", element: <MainLayout><TopWords /></MainLayout>, },
+  { path: "/word-detail/:word_text", element: <MainLayout><WordDetail /></MainLayout>, },
 ]);

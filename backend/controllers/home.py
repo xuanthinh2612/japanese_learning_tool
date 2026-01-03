@@ -7,6 +7,7 @@ from services import run_import
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql import func
 from sqlalchemy import or_
+from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 
 
 @app.before_request
@@ -222,6 +223,16 @@ def api_top_words():
         per_page=per_page,
         error_out=False
     )
+    
+    try:
+        # Xác thực JWT trong request
+        verify_jwt_in_request()  # Kiểm tra token JWT
+        username = get_jwt_identity()  # Lấy thông tin user từ JWT
+        g.user = User.query.filter_by(username=username).first()  # Tìm user trong DB theo username
+
+    except Exception as e:
+        # Nếu không có JWT hoặc không hợp lệ, g.user sẽ là None
+        g.user = None
 
     # Lưu kết quả từ vựng và trạng thái
     words_data = []

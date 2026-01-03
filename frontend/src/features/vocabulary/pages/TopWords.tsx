@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./styles/TopWords.css";
 import { fetchVocabularyList, addWordToList } from "../services/service";
+import { Link } from "react-router-dom";
 
 interface Word {
   id: string;
@@ -116,8 +117,10 @@ const TopWords: React.FC = () => {
       <div className="topword-container">
         {words.map((word) => (
           <div key={word.id} className="card topword-card">
-            <div className="topword-text" data-id={word.id}>
-              {word.text}
+            <div className="topword-text">
+              <Link className="topword-text" to={`/word-detail/${word.text}`}>
+                {word.text}
+              </Link>
             </div>
             <div className="topword-freq">{word.freq} lần</div>
             <div className="topword-status">
