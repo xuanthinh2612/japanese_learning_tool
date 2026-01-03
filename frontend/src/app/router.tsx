@@ -5,10 +5,12 @@ import Register from "@/features/auth/pages/Register";
 import MainLayout from "@/shared/components/layouts/MainLayout";
 import AuthLayout from "@/shared/components/layouts/AuthLayout";
 import HomePage from "@/features/homePage/pages/HomePage";
+import TopWords from "@/features/vocabulary/pages/TopWords";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <AuthLayout><Login /></AuthLayout>, },
   { path: "/register", element: <AuthLayout><Register /></AuthLayout>, },
   { path: "/profile", element: <MainLayout><Profile /></MainLayout>, },
   { path: "/", element: <MainLayout><HomePage /></MainLayout>, },
+  { path: "/top-words", element: <MainLayout><TopWords /></MainLayout>, },
 ]);

@@ -15,7 +15,7 @@ def load_logged_in_user():
     g.user = User.query.get(user_id) if user_id else None
 
 
-@app.route("/")
+@app.route("/") 
 def index():
     return render_template("index.html")
 
@@ -194,3 +194,56 @@ def uniformDataKanji(kanji_list):
 def uniformDataGrammar(grammars):
     grammar_data = [{"id": g.id, "pattern": g.pattern, "meaning": g.meaning} for g in grammars]
     return grammar_data
+
+
+# api to get top vocabulary
+@app.route("/api/top-words")
+def api_top_words():
+    page = request.args.get("page", 1, type=int)
+    per_page = 10  # Số lượng từ mỗi trang, bạn có thể điều chỉnh theo nhu cầu
+
+    # Truy vấn các từ vựng và số lần xuất hiện
+    query = (
+        db.session.query(
+            Word,
+            func.sum(WordOccurrence.count).label("freq")
+        )
+        .join(WordOccurrence)
+        .options(
+            joinedload(Word.forms),
+            joinedload(Word.readings)
+        )
+        .group_by(Word.id)
+        .order_by(func.sum(WordOccurrence.count).desc())
+    )
+
+    pagination = query.paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False
+    )
+
+    # Lưu kết quả từ vựng và trạng thái
+    words_data = []
+    for word, freq in pagination.items:
+        li_status = None
+        if g.user:
+            item = LearningItem.query.filter_by(
+                user_id=g.user.id,
+                word_id=word.id
+            ).first()
+            li_status = item.status if item else None
+
+        words_data.append({
+            "id": word.id,
+            "text": display_word(word),
+            "freq": freq,
+            "status": li_status
+        })
+
+    return jsonify({
+        "words": words_data,
+        "total": pagination.total,
+        "pages": pagination.pages,
+        "current_page": pagination.page
+    })

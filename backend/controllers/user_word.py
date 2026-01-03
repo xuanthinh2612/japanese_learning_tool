@@ -220,3 +220,46 @@ def api_my_words():
                 "total": pagination.total
             }
         })
+    
+
+@app.route("/api/add_to_learning/<int:word_id>", methods=["POST"])
+def api_add_to_learning(word_id):
+    if g.user is None:
+        return jsonify(
+            {
+                "success": False,
+                "status": "error",
+                "message": "Bạn chưa login"
+             }
+        ), 401
+
+    item = LearningItem.query.filter_by(
+        user_id=g.user.id,
+        word_id=word_id
+    ).first()
+
+    if item:
+        return jsonify(
+            {
+                "success": False,
+                "status": "error",
+                "message": "Từ đã có trong danh sách"
+             }
+        )
+
+    item = LearningItem(
+        user_id=g.user.id,
+        word_id=word_id,
+        status="added"
+    )
+    db.session.add(item)
+    db.session.commit()
+
+    return jsonify(
+        {
+            "success": True,
+            "status": "ok",
+            "message": "Đã thêm vào danh sách",
+            "item_id": item.id
+         }
+    )
