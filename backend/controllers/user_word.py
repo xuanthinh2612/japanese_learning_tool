@@ -265,7 +265,7 @@ def api_add_to_learning(word_id):
     )
 
 
-@app.route("/api/word-detail/<word_text>")
+@app.route("/api/word-detail/<word_text>", methods=["GET"])
 def api_word_detail(word_text):
     # 1. Lấy từ chính từ database
     word_obj = (

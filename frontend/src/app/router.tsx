@@ -14,5 +14,5 @@ export const router = createBrowserRouter([
   { path: "/profile", element: <MainLayout><Profile /></MainLayout>, },
   { path: "/", element: <MainLayout><HomePage /></MainLayout>, },
   { path: "/top-words", element: <MainLayout><TopWords /></MainLayout>, },
-  { path: "/word-detail/:word_text", element: <MainLayout><WordDetail /></MainLayout>, },
+  { path: "/word-detail/:wordText", element: <MainLayout><WordDetail /></MainLayout>, },
 ]);

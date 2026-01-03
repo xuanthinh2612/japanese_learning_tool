@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"; // Import useParams từ React Router
 // import { WordDetailData } from "../types/wordTypes";
 import { fetchWordDetail } from "../services/service";
+import "./styles/WordDetail.css"
 
 const WordDetail = () => {
   const { wordText } = useParams(); // Lấy tham số word_text từ URL
@@ -10,11 +11,8 @@ const WordDetail = () => {
   useEffect(() => {
     const fetchWord = async () => {
       try {
-        const response = fetchWordDetail(wordText);
-        if (!response.ok) {
-          throw new Error("Failed to fetch word details");
-        }
-        const data = await response.json();
+        const response = await fetchWordDetail(wordText);        
+        const data = response;
         setWordData(data);
       } catch (err) {
         console.error(err);
@@ -78,7 +76,8 @@ const WordDetail = () => {
               <li key={idx}>
                 <b>{article.title}</b>
                 <p>{article.source} · {article.count} times</p>
-                <div>{article.content}</div>
+                <div dangerouslySetInnerHTML={{ __html: article.content }} />
+
               </li>
             ))}
           </ul>
