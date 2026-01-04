@@ -18,7 +18,7 @@ def load_logged_in_user():
 @app.route("/kanji", methods=["GET"])
 def get_all_kanji():
     page = request.args.get("page", 1, type=int)
-    per_page = 60   # 60 kanji / page (hợp lý cho grid)
+    per_page = 10   # 60 kanji / page (hợp lý cho grid)
 
     pagination = Kanji.query.order_by(
         case((Kanji.frequency == None, 1), else_=0),
@@ -82,3 +82,67 @@ def add_kanji(kanji_id):
     db.session.commit()
 
     return {"message": "Đã thêm vào danh sách", "success": True, "item_id": item.id}
+
+
+# API to extract kanji from text
+@app.route("/api/kanji", methods=["GET"])
+def api_get_all_kanji():
+    page = request.args.get("page", 1, type=int)
+    per_page = 60  # 60 Kanji mỗi trang (có thể điều chỉnh tùy theo yêu cầu)
+
+    pagination = Kanji.query.order_by(
+        case((Kanji.frequency == None, 1), else_=0),
+        Kanji.frequency.asc()
+    ).paginate(page=page, per_page=per_page, error_out=False)
+
+    kanji_list = [
+        {
+            "id": kanji.id,
+            "character": kanji.character,
+            "level": kanji.level,
+            "hanviet": kanji.hanviet,
+            "meaning_vi": kanji.meaning_vi,
+            "onyomi": kanji.onyomi,
+            "kunyomi": kanji.kunyomi,
+            "frequency": kanji.frequency
+        }
+        for kanji in pagination.items
+    ]
+
+    return jsonify({
+        "kanji_list": kanji_list,
+        "total": pagination.total,
+        "pages": pagination.pages,
+        "current_page": pagination.page
+    })
+
+
+@app.route("/api/kanji/<int:kanji_id>", methods=["GET"])
+def api_kanji_detail(kanji_id):
+    kanji = Kanji.query.get_or_404(kanji_id)
+    user_kanji = None
+    if g.user:
+        user_kanji = UserKanji.query.filter_by(user_id=g.user.id, kanji_id=kanji_id).first()
+
+    if user_kanji:
+        btn_data = {
+            'disabled_flg': user_kanji.status in allowed,
+            'display_text': message[user_kanji.status]
+        }
+    else:
+        btn_data = {
+            'disabled_flg': False,
+            'display_text': "⭐ Thêm vào danh sách học"
+        }
+
+    kanji_detail = {
+        "id": kanji.id,
+        "character": kanji.character,
+        "onyomi": kanji.onyomi,
+        "kunyomi": kanji.kunyomi,
+        "meaning_vi": kanji.meaning_vi,
+        "examples": kanji.examples.split(' ') if kanji.examples else [],
+        "btn_data": btn_data
+    }
+
+    return jsonify(kanji_detail)
