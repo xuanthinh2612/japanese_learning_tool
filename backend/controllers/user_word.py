@@ -4,6 +4,9 @@ from models import Article, Word, WordOccurrence, User, LearningItem, WordForm, 
 from controllers.helper import extract_words
 from flask import g, session, jsonify, flash
 from sqlalchemy.orm import joinedload
+from flask_jwt_extended import (
+    JWTManager, jwt_required, get_jwt_identity
+)
 
 
 message = {"searched": "Đã tra", "added": "Đã thêm", "learning": "Đang học", "reviewing": "Đang ôn tập", "mastered": "Đã thuộc", "dropped": "Đã bỏ"}
@@ -180,7 +183,7 @@ def get_word(keyword):
 
 
 @app.route("/api/my_learning")
-def api_my_words():
+def api_my_learning():
     
     if g.user is None:
         return jsonify(
@@ -335,3 +338,85 @@ def api_word_detail(word_text):
         ],
         'btn_data': btn_data
     })
+    
+
+@app.route("/api/my-words", methods=["GET"])
+@jwt_required()
+def api_my_words():
+    username = get_jwt_identity()
+
+    if username is None:
+        return jsonify(
+            {
+                "success": False,
+                "status": "error",
+                "message": "Bạn chưa login"
+             }
+        )
+
+    user = User.query.filter_by(username=username).first()
+    
+    status = request.args.get("status", "learning")
+    page = request.args.get("page", 1, type=int)
+    per_page = 50
+    pagination = (
+        LearningItem.query
+        .filter_by(user_id=user.id, status=status)
+        .join(Word)
+        .paginate(page=page, per_page=per_page, error_out=False)
+    )
+    
+    print(len(pagination.items))
+    
+    return jsonify({
+        "success": True,
+        "words": 
+            [
+            {
+                "word_id": i.word.id,
+                "status": i.status,
+                "word": i.word.forms[0].form,
+            }
+            for i in pagination.items
+            ],
+        "pagination": {
+            "page": pagination.page,
+            "pages": pagination.pages,
+            "has_next": pagination.has_next,
+            "has_prev": pagination.has_prev,
+            "total": pagination.total
+        }
+        })
+    
+    
+@app.route("/api/update-word-status/<int:word_id>", methods=["POST"])
+@jwt_required()
+def update_word_status(word_id):
+    username = get_jwt_identity()
+    
+    if username is None:
+        return {"message": "Vui lòng đăng nhập", "success": False}, 401
+
+    user = User.query.filter_by(username=username).first()
+    
+    item = LearningItem.query.filter_by(
+        user_id=user.id,
+        word_id=word_id
+    ).first()
+        
+    if not item:
+        return {"message": "Từ chưa có trong danh sách học", "success": False}
+
+    data = request.get_json()
+    new_status = data.get("status")
+    
+    if new_status not in allowed:
+        return {"message": "Trạng thái không hợp lệ", "success": False}
+
+    item.status = new_status
+    db.session.commit()
+
+    return {
+        "message": f"Đã thêm vào → {message.get(new_status)}",
+        "success": True
+    }

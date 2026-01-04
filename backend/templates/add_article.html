@@ -2,32 +2,32 @@
 
 {% block title %}Home - WordApp{% endblock %}
 
-    
+
 {% block extra_css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style-form.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style-form.css') }}">
 {% endblock %}
 
 {% block content %}
 
 <div class="container">
-    <h1>Add Article</h1>
+  <h1>Add Article</h1>
 
-<form method="post">
-  <label>Title:</label>
-  <input name="title" type="text" required>
+  <form method="post">
+    <label>Title:</label>
+    <input name="title" type="text" required>
 
-  <label>Source ( / / ):</label>
-  <select name="source" required>
-    <option value="daily">daily</option>
-    <option value="news">news</option>
-    <option value="business">business</option>
-    <option value="formal">formal</option>
-  </select>
+    <label>Source ( / / ):</label>
+    <select name="source" required>
+      <option value="daily">daily</option>
+      <option value="news">news</option>
+      <option value="business">business</option>
+      <option value="formal">formal</option>
+    </select>
 
-  <label>Content:</label>
-  <textarea name="content" rows="10" required></textarea>
+    <label>Content:</label>
+    <textarea name="content" rows="10" required></textarea>
 
-  <button type="submit">Save</button>
-</form>
+    <button type="submit">Save</button>
+  </form>
 </div>
 {% endblock %}

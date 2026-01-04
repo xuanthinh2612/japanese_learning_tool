@@ -13,15 +13,6 @@ interface Grammar {
   level: string;
 }
 
-// interface Pagination {
-//   pages: number;
-//   current_page: number;
-//   has_prev: boolean;
-//   has_next: boolean;
-//   prev_num?: number;
-//   next_num?: number;
-// }
-
 const GrammarList = () => {
   const [grammarList, setGrammarList] = useState<Grammar[]>([]);
   // const [pagination, setPagination] = useState<Pagination | null>(null);
@@ -35,8 +26,6 @@ const GrammarList = () => {
       const response = await fetchGrammarList(page);
       setGrammarList(response.grammar_list);
       // setPagination(response.pagination);
-      console.log(response);
-
     }
     catch (error) {
       console.error("Error fetching grammar list:", error);
