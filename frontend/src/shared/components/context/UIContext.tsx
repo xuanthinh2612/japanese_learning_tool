@@ -4,7 +4,6 @@ import { createContext, useContext, useState } from "react";
 type UIContextType = {
     isSidebarOpen: boolean;
     toggleSidebar: () => void;
-    is
 };
 
 const UIContext = createContext<UIContextType | null>(null);

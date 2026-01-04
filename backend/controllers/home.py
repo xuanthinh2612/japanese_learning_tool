@@ -201,7 +201,7 @@ def uniformDataGrammar(grammars):
 @app.route("/api/top-words")
 def api_top_words():
     page = request.args.get("page", 1, type=int)
-    per_page = 2  # Số lượng từ mỗi trang, bạn có thể điều chỉnh theo nhu cầu
+    per_page = 60  # Số lượng từ mỗi trang, bạn có thể điều chỉnh theo nhu cầu
 
     # Truy vấn các từ vựng và số lần xuất hiện
     query = (

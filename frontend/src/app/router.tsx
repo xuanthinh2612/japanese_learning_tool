@@ -9,6 +9,9 @@ import TopWords from "@/features/vocabulary/pages/TopWords";
 import WordDetail from "@/features/vocabulary/pages/WordDetail";
 import KanjiList from "@/features/kanji/pages/KanjiList";
 import KanjiDetail from "@/features/kanji/pages/KanjiDetail";
+import GrammarList from "@/features/grammar/pages/GrammarList";
+import GrammarDetail from "@/features/grammar/pages/GrammarDetail";
+import MyWords from "@/features/vocabulary/pages/MyWords";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <AuthLayout><Login /></AuthLayout>, },
@@ -19,4 +22,7 @@ export const router = createBrowserRouter([
   { path: "/word-detail/:wordText", element: <MainLayout><WordDetail /></MainLayout>, },
   { path: "/kanji", element: <MainLayout><KanjiList /></MainLayout>, },
   { path: "/kanji/:kanjiId", element: <MainLayout><KanjiDetail /></MainLayout>, },
+  { path: "/grammar", element: <MainLayout><GrammarList /></MainLayout>, },
+  { path: "/grammar/:grammarId", element: <MainLayout><GrammarDetail /></MainLayout>, },
+  { path: "/my-words", element: <MainLayout><MyWords /></MainLayout>, },
 ]);

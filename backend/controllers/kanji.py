@@ -18,7 +18,7 @@ def load_logged_in_user():
 @app.route("/kanji", methods=["GET"])
 def get_all_kanji():
     page = request.args.get("page", 1, type=int)
-    per_page = 10   # 60 kanji / page (hợp lý cho grid)
+    per_page = 50   # 60 kanji / page (hợp lý cho grid)
 
     pagination = Kanji.query.order_by(
         case((Kanji.frequency == None, 1), else_=0),
@@ -138,6 +138,10 @@ def api_kanji_detail(kanji_id):
     kanji_detail = {
         "id": kanji.id,
         "character": kanji.character,
+        "level": kanji.level,
+        "frequency": kanji.frequency,
+        "hanviet": kanji.hanviet,
+        "strokes": kanji.strokes,
         "onyomi": kanji.onyomi,
         "kunyomi": kanji.kunyomi,
         "meaning_vi": kanji.meaning_vi,

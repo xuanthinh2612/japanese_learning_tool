@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { registerRequest } from "../services";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import './styles/HomePage.css';  // Import file CSS chung cho toàn bộ
 
 // Không dùng CSS Modules

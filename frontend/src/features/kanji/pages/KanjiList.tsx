@@ -1,11 +1,20 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { fetchKanjiList } from "../services/service";
 import './styles/Kanji.css';
+import PagePagination from "@/shared/components/layouts/PagePagination";
+import Loading from "@/shared/components/layouts/Loading";
 
+type Kanji = {
+  id: number;
+  character: string;
+  level: string;
+  hanviet: string;
+  meaning_vi: string;
+};
 
 const KanjiList = () => {
-  const [kanjiList, setKanjiList] = useState([]);
+  const [kanjiList, setKanjiList] = useState<Kanji[]>([]);
   const [pagination, setPagination] = useState({
     total: 0,
     pages: 0,
@@ -34,9 +43,11 @@ const KanjiList = () => {
     fetchKanji(1);
   }, []);
 
+  if (loading) return <Loading isLoading={loading} />;
+
+
   return (
     <div>
-      {loading && <div>Loading...</div>}
       <div className="container kanji-container">
         {kanjiList.map((kanji) => (
           <Link to={`/kanji/${kanji.id}`} key={kanji.id} className="card kanji-card">
@@ -51,54 +62,7 @@ const KanjiList = () => {
       </div>
 
       {/* Pagination */}
-      <div className="pagination">
-        {/* Prev Button */}
-        {pagination.current_page > 1 && (
-          <button onClick={() => fetchKanji(pagination.current_page - 1)}>« Prev</button>
-        )}
-
-        {/* Các số trang */}
-        {[...Array(pagination.pages)].map((_, idx) => {
-          const pageNum = idx + 1;
-
-          // Xác định vị trí trang hiện tại và các trang hiển thị
-          const isAdjacent =
-            pageNum === pagination.current_page ||
-            pageNum === pagination.current_page - 1 ||
-            pageNum === pagination.current_page + 1;
-
-          const isEdgePage =
-            pageNum === 1 || pageNum === pagination.pages;
-
-          // Kiểm tra xem dấu "..." có nên hiển thị không
-          const showEllipsis =
-            (pageNum === pagination.current_page - 2 && pagination.current_page > 3) ||
-            (pageNum === pagination.current_page + 2 && pagination.current_page < pagination.pages - 2);
-
-          return (
-            <>
-              {/* Hiển thị dấu ... */}
-              {showEllipsis && <span key={`ellipsis-${pageNum}`} className="dots">...</span>}
-
-              {/* Hiển thị các trang */}
-              {(isAdjacent || isEdgePage) && (
-                <button
-                  key={pageNum}
-                  onClick={() => fetchKanji(pageNum)}
-                  className={pageNum === pagination.current_page ? "active" : ""}
-                >
-                  {pageNum}
-                </button>
-              )}
-            </>
-          );
-        })}
-
-        {/* Next Button */}
-        {pagination.current_page < pagination.pages && (
-          <button onClick={() => fetchKanji(pagination.current_page + 1)}>Next »</button>
-        )}
-      </div>
+      <PagePagination pagination={pagination} nextPageFunc={fetchKanji} />
     </div>
   );
 };

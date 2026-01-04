@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./styles/TopWords.css";
 import { fetchVocabularyList, addWordToList } from "../services/service";
 import { Link } from "react-router-dom";
+import PagePagination from "@/shared/components/layouts/PagePagination";
+import { useAuth } from "@/features/auth/context/AuthContext";
+import Loading from "@/shared/components/layouts/Loading";
 
 interface Word {
   id: string;
@@ -16,7 +19,7 @@ interface Pagination {
   current_page: number;
 }
 
-const TopWords: React.FC = () => {
+const TopWords = () => {
   const [words, setWords] = useState<Word[]>([]);
   const [pagination, setPagination] = useState<Pagination>({
     total: 0,
@@ -25,6 +28,8 @@ const TopWords: React.FC = () => {
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const { user } = useAuth(); // Giả sử bạn có context để lấy thông tin user
+
 
   // Fetch từ vựng từ API
   const fetchWords = useCallback(async (page: number) => {
@@ -69,47 +74,15 @@ const TopWords: React.FC = () => {
     }
   };
 
-  const updateStatus = (parentCard: HTMLElement) => {
+  const updateStatus = (parentCard: Element) => {
     const leaningStatus = parentCard.querySelector(".status");
     if (leaningStatus) {
       leaningStatus.className = "status learning";
-      leaningStatus.innerText = "📘 Đang học";
+      (leaningStatus as HTMLElement).innerText = "📘 Đang học";
     }
   };
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        {/* SVG Spinner */}
-        <svg
-          width="50"
-          height="50"
-          viewBox="0 0 50 50"
-          preserveAspectRatio="xMidYMid"
-          className="spinner"
-        >
-          <circle
-            cx="25"
-            cy="25"
-            r="20"
-            stroke="#36d7b7"
-            strokeWidth="4"
-            fill="none"
-            strokeLinecap="round"
-          >
-            <animate
-              attributeName="stroke-dasharray"
-              values="1,200;89,150;1,200"
-              keyTimes="0;0.5;1"
-              dur="1.5s"
-              repeatCount="indefinite"
-            />
-          </circle>
-        </svg>
-        <div>Đang tải dữ liệu...</div>
-      </div>
-    );
-  }
+  if (loading) return <Loading isLoading={loading} />;
 
   return (
     <div>
@@ -123,65 +96,37 @@ const TopWords: React.FC = () => {
               </Link>
             </div>
             <div className="topword-freq">{word.freq} lần</div>
-            <div className="topword-status">
-              {word.status === null && <span className="status none">Chưa học</span>}
-              {word.status === "learning" && <span className="status learning">Đang học</span>}
-              {word.status === "reviewing" && <span className="status reviewing">Đang ôn</span>}
-              {word.status === "mastered" && <span className="status mastered">✔ Đã thuộc</span>}
-              {word.status === "dropped" && <span className="status dropped">Đã bỏ</span>}
-            </div>
-            <div className="topword-actions">
-              {word.status === null ? (
-                <button
-                  className="action-btn add-btn"
-                  onClick={(e) => handleButtonClick(word.id, e.currentTarget)}
-                >
-                  + Thêm
-                </button>
-              ) : (
-                <button className="action-btn" disabled>
-                  Đã thêm
-                </button>
-              )}
-            </div>
+            {user && (
+              <>
+                <div className="topword-status">
+                  {word.status === null && <span className="status none">Chưa học</span>}
+                  {word.status === "learning" && <span className="status learning">Đang học</span>}
+                  {word.status === "reviewing" && <span className="status reviewing">Đang ôn</span>}
+                  {word.status === "mastered" && <span className="status mastered">✔ Đã thuộc</span>}
+                  {word.status === "dropped" && <span className="status dropped">Đã bỏ</span>}
+                </div>
+                <div className="topword-actions">
+                  {word.status === null ? (
+                    <button
+                      className="action-btn add-btn"
+                      onClick={(e) => handleButtonClick(word.id, e.currentTarget)}
+                    >
+                      + Thêm
+                    </button>
+                  ) : (
+                    <button className="action-btn" disabled>
+                      Đã thêm
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>
 
       {/* Phân trang */}
-      {pagination.pages > 1 && (
-        <div className="pagination">
-          {/* Prev Button */}
-          {pagination.current_page > 1 && (
-            <a href="#" onClick={() => fetchWords(pagination.current_page - 1)}>
-              « Prev
-            </a>
-          )}
-
-          {/* Các số trang */}
-          {Array.from({ length: pagination.pages }, (_, index) => {
-            const pageNum = index + 1;
-            return (
-              <React.Fragment key={pageNum}>
-                {pageNum === pagination.current_page ? (
-                  <span className="current">{pageNum}</span>
-                ) : (
-                  <a href="#" onClick={() => fetchWords(pageNum)}>
-                    {pageNum}
-                  </a>
-                )}
-              </React.Fragment>
-            );
-          })}
-
-          {/* Next Button */}
-          {pagination.current_page < pagination.pages && (
-            <a href="#" onClick={() => fetchWords(pagination.current_page + 1)}>
-              Next »
-            </a>
-          )}
-        </div>
-      )}
+      <PagePagination pagination={pagination} nextPageFunc={fetchWords} />
     </div>
   );
 };
